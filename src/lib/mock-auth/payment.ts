@@ -49,8 +49,8 @@ export interface Payment {
   currency: string
   paymentType: string
   paymentMethod: {
-    type: string
-    network?: string
+    type: 'mobile_money' | 'card' | 'cash'
+    network?: 'mtn' | 'vodafone' | 'telecel' | 'airtel'
     phoneNumber?: string
     accountName?: string
     networkDisplayName?: string

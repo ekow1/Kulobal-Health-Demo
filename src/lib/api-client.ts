@@ -42,7 +42,7 @@ export interface Payment {
   currency: string;
   paymentType: string;
   paymentMethod: {
-    type: 'mobile_money' | 'card' | 'bank_transfer' | 'cash';
+    type: 'mobile_money' | 'card' | 'cash';
     network?: 'mtn' | 'vodafone' | 'telecel' | 'airtel';
     phoneNumber?: string;
     accountName?: string;
@@ -52,8 +52,8 @@ export interface Payment {
   description: string;
   metadata: {
     orderId: string;
-    paymentType: 'full-payment' | 'partial-payment' | 'deposit';
-    paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money';
+    paymentType: 'full-payment' | 'partial-payment' | 'deposit' | 'installment-payment';
+    paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money' | 'cash-on-delivery' | 'pay-online';
     pharmacyName: string;
     shippingDetails: {
       pharmacyName: string;
@@ -196,7 +196,7 @@ class ApiClient {
     currency?: string;
     paymentType: 'card' | 'mobile_money' | 'cash on delivery' | 'credit';
     paymentMethod: {
-      type: 'card' | 'mobile_money';
+      type: 'card' | 'mobile_money' | 'cash';
       // Card payment fields
       cardType?: 'visa' | 'mastercard' | 'american_express' | 'discover';
       last4Digits?: string;
@@ -213,8 +213,8 @@ class ApiClient {
     description: string;
     metadata?: {
       orderId: string;
-      paymentType: 'full-payment' | 'partial-payment' | 'deposit';
-      paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money';
+      paymentType: 'full-payment' | 'partial-payment' | 'deposit' | 'installment-payment';
+      paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money' | 'cash-on-delivery' | 'pay-online';
       pharmacyName: string;
       shippingDetails: {
         pharmacyName: string;

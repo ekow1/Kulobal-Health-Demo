@@ -10,7 +10,7 @@ import { ModeToggle } from "../ui/mode-toggle"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
 import clsx from "clsx"
 import { Button } from "../ui/button"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 import { usePathname } from "next/navigation"
 
 const navigationLinks = {

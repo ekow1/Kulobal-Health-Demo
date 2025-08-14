@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { apiClient } from "@/lib/api-client"
-import type { Payment } from "@/lib/mock-auth/payment"
+import type { Payment } from "@/types/payment"
 
 // Server Actions
 export async function getPayments(): Promise<Payment[]> {

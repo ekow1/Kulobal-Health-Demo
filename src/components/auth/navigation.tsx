@@ -1,5 +1,5 @@
 "use client"
-import { useAuthStore } from "@/lib/mock-auth/auth";
+import { useAuthStore } from "@/store/auth-store";
 import { DashboardNavbar } from "../dashbord/navbar"
 import { Navbar } from "../navbar"
 

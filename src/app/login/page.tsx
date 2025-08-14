@@ -13,7 +13,7 @@ import Loader from "@/components/loader"
 import LoginSkeleton from "@/components/auth/login-skeleton"
 import { useState } from "react"
 import toast from "react-hot-toast"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 
 export default function Login() {
   const { login, isLoading, clearError } = useAuthStore()

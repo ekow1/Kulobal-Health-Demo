@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { devtools, persist } from "zustand/middleware"
 import { apiClient } from "@/lib/api-client"
-import type { Payment } from "@/lib/mock-auth/payment"
+import type { Payment } from "@/types/payment"
 
 interface PaymentStats {
   total: number

@@ -11,7 +11,7 @@ import {
 import { ArrowLeft, ArrowRight, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePaymentStore, useFilteredPayments } from "@/store/payment-store"
-import type { Payment } from "@/lib/mock-auth/payment"
+import type { Payment } from "@/types/payment"
 
 export function PaymentsTable() {
   const { fetchPayments } = usePaymentStore()

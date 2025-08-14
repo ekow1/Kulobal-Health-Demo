@@ -1,7 +1,7 @@
 "use server"
 
 import { apiClient } from "@/lib/api-client"
-import { User } from "@/lib/mock-auth/auth"
+import { User } from "@/types/user"
 
 // Login action
 export async function loginUser(email: string, password: string) {

@@ -15,7 +15,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 import Profile from "./auth/account-dropdown"
 import { useCartStore } from "@/store/cart-store"
 

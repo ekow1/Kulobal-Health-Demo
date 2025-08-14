@@ -23,7 +23,7 @@ import {
   Building2,
   Mail,
 } from "lucide-react"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 

@@ -1,18 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { loginUser, registerUser, updateUserProfile,logoutUser } from "@/app/actions/auth-actions"
-
-export interface User {
-  id: string
-  businessName: string
-  ownerName: string
-  location: string
-  email: string
-  telephone: string
-  avatar?: string
-  role: "pharmacy" | "supplier" | "otc" | "admin"
-  createdAt: string
-}
+import { loginUser, registerUser, updateUserProfile, logoutUser } from "@/app/actions/auth-actions"
+import { User, RegisterData } from "@/types/user"
 
 interface AuthState {
   user: User | null
@@ -27,16 +16,6 @@ interface AuthActions {
   logout: () => void
   clearError: () => void
   updateProfile: (userData: Partial<User>) => Promise<{ success: boolean; error?: string }>
-}
-
-interface RegisterData {
-  businessName: string
-  ownerName: string
-  location: string
-  email: string
-  telephone: string
-  password: string
-  role: "pharmacy" | "supplier" | "otc" | "admin"
 }
 
 type AuthStore = AuthState & AuthActions
@@ -116,11 +95,7 @@ export const useAuthStore = create<AuthStore>()(
         if (result) {
            return { success: true }
         }
-
-
       },
-
-      
 
       clearError: () => {
         set({ error: null })

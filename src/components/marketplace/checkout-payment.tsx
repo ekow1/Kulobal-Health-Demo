@@ -8,10 +8,10 @@ import { ArrowLeft, Smartphone, CreditCard, Check, X } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useCartStore } from "@/store/cart-store"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 import { Button } from "@/components/ui/button"
 import { usePaymentStore } from "@/store/payment-store"
-import type { Payment } from "@/lib/mock-auth/payment"
+import type { Payment } from "@/types/payment"
 import { useUserStore } from "@/store/user-store"
 
 

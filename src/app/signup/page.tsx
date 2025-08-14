@@ -5,7 +5,7 @@ import img from "@/assets/images/groupImg.png"
 import Link from "next/link"
 import BusinessRegistrationForm from "@/components/auth/business-registration-form"
 import SignupSkeleton from "@/components/auth/signup-skeleton"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 
 export default function BusinessRegistration() {
   const { isLoading } = useAuthStore()

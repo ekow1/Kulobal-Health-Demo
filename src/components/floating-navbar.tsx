@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Home, Search, ShoppingCart, LayoutDashboard, User } from "lucide-react"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
-import { useAuthStore } from "@/lib/mock-auth/auth"
+import { useAuthStore } from "@/store/auth-store"
 import { useCartStore } from "@/store/cart-store"
 
 const navigationItems = [

@@ -10,7 +10,7 @@ export interface User {
   email: string
   telephone: string
   avatar?: string
-  role: "pharmacy" | "supplier" | "otc"
+  role: "pharmacy" | "supplier" | "otc" | "admin"
   createdAt: string
 }
 
@@ -36,7 +36,7 @@ interface RegisterData {
   email: string
   telephone: string
   password: string
-  role: "pharmacy" | "supplier" | "otc"
+  role: "pharmacy" | "supplier" | "otc" | "admin"
 }
 
 type AuthStore = AuthState & AuthActions

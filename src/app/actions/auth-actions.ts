@@ -44,7 +44,7 @@ export async function registerUser(userData: {
   email: string
   telephone: string
   password: string
-  role: "pharmacy" | "supplier" | "otc"
+  role: "pharmacy" | "supplier" | "otc" | "admin"
 }) {
   try {
     const response = await apiClient.register(userData)

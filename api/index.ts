@@ -27,8 +27,12 @@ app.use('*', compress());
 // Cookie parsing is built into Hono, no need for separate middleware
 
 // CORS configuration
+const corsOrigins = process.env.CORS_ORIGIN 
+  ? [process.env.CORS_ORIGIN]
+  : ['http://localhost:3000', 'https://demo.ekowlabs.space'];
+
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'http://localhost:5000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3006', 'http://localhost:3007', 'http://localhost:3008', 'http://localhost:3009', 'http://localhost:3010'],
+  origin: corsOrigins,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true

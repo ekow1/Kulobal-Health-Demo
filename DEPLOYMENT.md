@@ -4,7 +4,9 @@
 
 - VPS with Docker and Docker Compose installed
 - MongoDB Atlas connection string
-- Domain name (optional)
+- Domain names configured:
+  - `demo.ekowlabs.space` (frontend)
+  - `server.ekowlabs.space` (backend API)
 
 ## VPS Setup
 
@@ -73,19 +75,20 @@ chmod +x deploy.sh
 ./deploy.sh
 ```
 
-## SSL Setup (Optional)
+## SSL Setup
 
 1. **Install Certbot**
 ```bash
 sudo apt install certbot python3-certbot-nginx -y
 ```
 
-2. **Get SSL certificate**
+2. **Get SSL certificates for both domains**
 ```bash
-sudo certbot --nginx -d yourdomain.com
+sudo certbot --nginx -d demo.ekowlabs.space
+sudo certbot --nginx -d server.ekowlabs.space
 ```
 
-3. **Update nginx.conf** to include SSL configuration
+3. **Update nginx.conf** - Uncomment SSL configuration lines after certificates are obtained
 
 ## Monitoring
 

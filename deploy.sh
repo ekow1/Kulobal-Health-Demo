@@ -23,4 +23,6 @@ echo "🧹 Cleaning up..."
 docker system prune -f
 
 echo "✅ Deployment completed!"
-echo "🌐 Application should be available at: http://your-domain.com"
+echo "🌐 Frontend available at: https://demo.ekowlabs.space"
+echo "🔧 Backend API available at: https://server.ekowlabs.space"
+

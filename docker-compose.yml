@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_API_URL=https://server.ekowlabs.space
     networks:
       - kulobal-network
 
@@ -24,6 +24,7 @@ services:
       - PORT=5000
       - MONGODB_URI=${MONGODB_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGIN=https://demo.ekowlabs.space
     networks:
       - kulobal-network
 

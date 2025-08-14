@@ -153,7 +153,7 @@ class ApiClient {
     email: string;
     telephone: string;
     password: string;
-    role: 'pharmacy' | 'supplier' | 'otc';
+    role: 'pharmacy' | 'supplier' | 'otc' | 'admin';
     pharmacyName?: string;
     phoneNumber?: string;
     pharmacyEmail?: string;

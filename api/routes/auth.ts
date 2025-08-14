@@ -14,7 +14,7 @@ const registerSchema = z.object({
   email: z.string().email(),
   telephone: z.string().min(10),
   password: z.string().min(6),
-  role: z.enum(['pharmacy', 'supplier', 'otc']),
+  role: z.enum(['pharmacy', 'supplier', 'otc', 'admin']),
   pharmacyName: z.string().optional(),
   phoneNumber: z.string().optional(),
   pharmacyEmail: z.string().email().optional(),

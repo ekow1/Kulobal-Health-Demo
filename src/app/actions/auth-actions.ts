@@ -1,6 +1,5 @@
 "use server"
 
-import { cookies } from "next/headers"
 import { apiClient } from "@/lib/api-client"
 import { User } from "@/lib/mock-auth/auth"
 
@@ -14,18 +13,9 @@ export async function loginUser(email: string, password: string) {
     }
 
     if (response.data?.user) {
-      // Set a cookie for server-side authentication
-      (await cookies()).set("userId", response.data.user.id, {
-        httpOnly: true,
-        path: "/",
-        sameSite: "lax",
-        // secure: true, // Uncomment in production
-        maxAge: 60 * 60 * 24 * 7, // 1 week
-      })
-
       // Convert API user format to frontend format
       const user: User = {
-        id: response.data.user.id,
+        id: response.data.user._id, // MongoDB uses _id
         businessName: response.data.user.businessName,
         ownerName: response.data.user.ownerName,
         location: response.data.user.location,
@@ -66,7 +56,7 @@ export async function registerUser(userData: {
     if (response.data?.user) {
       // Convert API user format to frontend format
       const user: User = {
-        id: response.data.user.id,
+        id: response.data.user._id, // MongoDB uses _id
         businessName: response.data.user.businessName,
         ownerName: response.data.user.ownerName,
         location: response.data.user.location,
@@ -99,7 +89,7 @@ export async function updateUserProfile(userId: string, userData: Partial<User>)
     if (response.data?.user) {
       // Convert API user format to frontend format
       const user: User = {
-        id: response.data.user.id,
+        id: response.data.user._id, // MongoDB uses _id
         businessName: response.data.user.businessName,
         ownerName: response.data.user.ownerName,
         location: response.data.user.location,
@@ -125,12 +115,6 @@ export async function logoutUser() {
   try {
     // Call the API logout endpoint to clear the auth cookie
     await apiClient.logout()
-    
-    // Remove the userId cookie by setting it to expire in the past
-    (await cookies()).set("userId", "", {
-      httpOnly: true,
-      expires: new Date(0),
-    })
     return { success: true }
   } catch (error) {
     console.error("Logout error:", error)

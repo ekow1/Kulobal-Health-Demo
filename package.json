@@ -6,7 +6,7 @@
     "dev": "cd api && npm run dev",
     "build": "cd api && npm run build",
     "start": "cd api && npm run start",
-    "install:all": "cd api && npm ci",
+    "install": "cd api && npm ci",
     "test": "echo \"No tests specified\" && exit 0"
   }
 }

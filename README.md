@@ -1,20 +1,19 @@
 # Kulobal Health Backend API
 
-A Node.js backend API for the Kulobal Health platform built with Hono framework and MongoDB.
+A Node.js backend API built with Hono framework for the Kulobal Health platform.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
+- Docker & Docker Compose
 - MongoDB database
-- Docker (for production deployment)
 
 ### Local Development
 
 1. **Install dependencies:**
    ```bash
-   cd api
-   npm ci
+   npm run install
    ```
 
 2. **Set up environment variables:**
@@ -28,86 +27,90 @@ A Node.js backend API for the Kulobal Health platform built with Hono framework 
    npm run dev
    ```
 
-The API will be available at `http://localhost:5000`
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
 
-### Production Deployment
-
-#### Using Docker
+### Docker Deployment
 
 1. **Build and run with Docker Compose:**
    ```bash
-   docker compose up -d
+   docker-compose up -d
    ```
 
-2. **Or build manually:**
+2. **View logs:**
    ```bash
-   docker build -f Dockerfile.backend -t kulobal-backend .
-   docker run -p 5000:5000 --env-file .env kulobal-backend
+   docker-compose logs -f
    ```
 
-#### Using GitHub Actions
-
-The repository includes GitHub Actions for automatic deployment to VPS:
-
-1. Set up GitHub Secrets:
-   - `VPS_HOST`: Your VPS IP address
-   - `VPS_USERNAME`: SSH username
-   - `VPS_SSH_KEY`: Private SSH key
-   - `VPS_SSH_PASSPHRASE`: SSH key passphrase (if any)
-   - `VPS_PORT`: SSH port (usually 22)
-   - `MONGODB_URI`: MongoDB connection string
-   - `JWT_SECRET`: JWT secret key
-
-2. Push to `main` branch to trigger deployment
+3. **Stop services:**
+   ```bash
+   docker-compose down
+   ```
 
 ## 📁 Project Structure
 
 ```
-├── api/                    # Backend API code
-│   ├── config/            # Database configuration
-│   ├── middleware/        # Authentication middleware
-│   ├── models/           # MongoDB models
-│   ├── routes/           # API routes
-│   ├── package.json      # Backend dependencies
-│   └── tsconfig.json     # TypeScript configuration
-├── .github/workflows/    # GitHub Actions
-├── docker-compose.yml    # Docker Compose configuration
-├── Dockerfile.backend    # Backend Dockerfile
-└── package.json          # Root package.json
+├── api/                 # Backend API source code
+│   ├── config/         # Database and configuration
+│   ├── middleware/     # Authentication middleware
+│   ├── models/         # MongoDB models
+│   ├── routes/         # API routes
+│   └── index.ts        # Main entry point
+├── frontend/           # Frontend code (kept for reference)
+├── docker-compose.yml  # Docker services configuration
+├── Dockerfile.backend  # Backend Docker image
+├── nginx.conf         # Nginx reverse proxy configuration
+└── ssl/               # SSL certificates directory
 ```
 
-## 🔧 API Endpoints
+## 🔧 Configuration
 
-- `GET /api/health` - Health check
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `GET /api/products` - Get products
-- `POST /api/orders` - Create order
-- `GET /api/payments` - Get payments
+### Environment Variables
 
-## 🛠️ Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run install:all` - Install all dependencies
-
-## 🔒 Environment Variables
-
-Required environment variables:
+Create a `.env` file in the root directory:
 
 ```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database
-JWT_SECRET=your-super-secret-jwt-key
+# Database
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/kulobal-health?retryWrites=true&w=majority
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# API Configuration
 PORT=5000
 NODE_ENV=production
 ```
 
-## 📦 Docker
+### SSL Certificates
 
-The backend is containerized using Docker:
+Place your SSL certificates in the `ssl/` directory:
+- `ssl/cert.pem` - SSL certificate
+- `ssl/key.pem` - Private key
 
-- **Development:** `docker compose up`
-- **Production:** `docker compose up -d`
+## 🌐 API Endpoints
 
-The container exposes port 5000 and includes all necessary dependencies.
+- `GET /health` - Health check
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+- `GET /api/products` - Get products
+- `POST /api/orders` - Create order
+- `GET /api/orders` - Get orders
+
+## 🚀 Deployment
+
+The project uses GitHub Actions for automated deployment to VPS.
+
+### Required GitHub Secrets:
+- `VPS_HOST` - VPS IP address
+- `VPS_USERNAME` - SSH username
+- `VPS_SSH_KEY` - SSH private key
+- `VPS_SSH_PASSPHRASE` - SSH key passphrase
+- `VPS_PORT` - SSH port (usually 22)
+- `MONGODB_URI` - MongoDB connection string
+- `JWT_SECRET` - JWT secret key
+
+## 📝 License
+
+This project is proprietary software.

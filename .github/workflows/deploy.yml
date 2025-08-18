@@ -49,7 +49,7 @@ jobs:
           echo "Testing Docker availability..."
           docker --version
 
-    - name: Deploy Backend to VPS
+    - name: Deploy to VPS
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -59,14 +59,14 @@ jobs:
         passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
         port: ${{ secrets.VPS_PORT }}
         timeout: 60s
-        command_timeout: 15m
+        command_timeout: 30m
         script: |
-          echo "🚀 Starting backend deployment..."
+          echo "🚀 Starting deployment..."
           echo "Current user: $(whoami)"
           echo "Current directory: $(pwd)"
           
           # Set deployment directory in user's home
-          DEPLOY_DIR="$HOME/kulobal-backend"
+          DEPLOY_DIR="$HOME/kulobal-health-demo"
           echo "Using deployment directory: $DEPLOY_DIR"
           
           # Check if deployment directory exists
@@ -87,7 +87,6 @@ jobs:
           cd api
           npm ci
           npm run build
-          cd ..
           
           # Check if Docker Compose is available (prioritize new syntax)
           if docker compose version &> /dev/null; then
@@ -115,6 +114,9 @@ jobs:
           echo "# API Configuration" >> .env
           echo "PORT=5000" >> .env
           echo "NODE_ENV=production" >> .env
+          echo "" >> .env
+          echo "# Frontend Configuration" >> .env
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
           echo "Environment variables configured from GitHub secrets"
           
           # Set proper permissions for .env file
@@ -123,37 +125,37 @@ jobs:
           echo "Stopping containers..."
           $DOCKER_COMPOSE_CMD down --remove-orphans || echo "No containers to stop"
           
-          echo "Building backend container..."
+          echo "Building containers..."
           if $DOCKER_COMPOSE_CMD build --no-cache; then
-            echo "✅ Backend container built successfully"
+            echo "✅ Containers built successfully"
           else
-            echo "❌ Backend container build failed"
+            echo "❌ Container build failed"
             exit 1
           fi
           
-          echo "Starting backend container..."
+          echo "Starting containers..."
           if $DOCKER_COMPOSE_CMD up -d; then
-            echo "✅ Backend container started successfully"
+            echo "✅ Containers started successfully"
           else
-            echo "❌ Backend container startup failed"
+            echo "❌ Container startup failed"
             exit 1
           fi
           
-          echo "Waiting for container to be ready..."
-          sleep 10
+          echo "Waiting for containers to be ready..."
+          sleep 15
           
           echo "Checking container status..."
           $DOCKER_COMPOSE_CMD ps
           
-          # Check if container is running
+          # Check if all containers are running
           if $DOCKER_COMPOSE_CMD ps | grep -q "Up"; then
-            echo "✅ Backend container is running"
+            echo "✅ All containers are running"
           else
-            echo "❌ Backend container failed to start"
+            echo "❌ Some containers failed to start"
             $DOCKER_COMPOSE_CMD logs
             exit 1
           fi
           
           echo "Cleaning up Docker system..."
           docker system prune -f
-          echo "✅ Backend deployment completed successfully!"
+          echo "✅ Deployment completed successfully!"

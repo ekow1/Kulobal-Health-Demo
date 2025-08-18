@@ -1,5 +1,0 @@
-[33m6982a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Remove unnecessary files and consolidate types: remove mock-auth, scripts, db directory, and cookies.txt
-[33m847dc34[m Fix payment type mismatches: align frontend and backend payment method types
-[33m398dc6c[m Fix type mismatches: align frontend and backend role types to include admin
-[33m6b1144f[m Add admin role to frontend User type to match backend
-[33mfbacfd3[m Fix auth actions: remove frontend cookie setting and fix user ID mapping

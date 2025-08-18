@@ -11,14 +11,13 @@ echo "🚀 Starting application deployment..."
 export MONGODB_URI=${MONGODB_URI}
 export JWT_SECRET=${JWT_SECRET}
 
-# Create application directory
+# Create application directory in user's home
 echo "📁 Setting up application directory..."
-sudo mkdir -p /var/www/kulobal-api
-sudo chown $USER:$USER /var/www/kulobal-api
+mkdir -p ~/kulobal-api
 
 # Clone repository
 echo "📥 Cloning repository..."
-cd /var/www/kulobal-api
+cd ~/kulobal-api
 rm -rf ./* 2>/dev/null || true
 git clone https://github.com/ekow1/Kulobal-Health-Demo.git .
 cd api
@@ -37,17 +36,13 @@ JWT_SECRET=${JWT_SECRET}
 CORS_ORIGIN=https://demo.ekowlabs.space
 EOF
 
-# Setup nginx configuration
+# Setup nginx configuration (without sudo)
 echo "🔧 Setting up nginx configuration..."
 
-# Remove default nginx sites
-echo "🧹 Removing default nginx sites..."
-sudo rm -f /etc/nginx/sites-enabled/default
-sudo rm -f /etc/nginx/sites-available/default
-
-# Create our custom nginx site
-echo "📝 Creating custom nginx site..."
-sudo tee /etc/nginx/sites-available/kulobal-api << EOF
+# Create nginx config in user directory
+echo "📝 Creating nginx configuration..."
+mkdir -p ~/nginx-config
+cat > ~/nginx-config/kulobal-api.conf << EOF
 # Rate limiting
 limit_req_zone \$binary_remote_addr zone=api:10m rate=10r/s;
 
@@ -131,18 +126,8 @@ server {
 }
 EOF
 
-# Enable the site
-echo "🔧 Enabling nginx site..."
-sudo ln -sf /etc/nginx/sites-available/kulobal-api /etc/nginx/sites-enabled/
-
-# Test nginx configuration
-echo "🔧 Testing nginx configuration..."
-sudo nginx -t
-
-# Stop any existing nginx processes
-echo "🔄 Stopping existing nginx processes..."
-sudo systemctl stop nginx || true
-sudo pkill nginx || true
+echo "📋 Nginx configuration created at ~/nginx-config/kulobal-api.conf"
+echo "📋 Please manually copy this configuration to /etc/nginx/sites-available/ and enable it"
 
 # Start the application with PM2
 echo "🚀 Starting application with PM2..."
@@ -151,23 +136,17 @@ pm2 start index.js --name kulobal-api --env production
 pm2 save
 pm2 startup
 
-# Start and enable nginx
-echo "🔄 Starting and enabling nginx..."
-sudo systemctl start nginx
-sudo systemctl enable nginx
-
-# Verify nginx is running
-echo "🔍 Verifying nginx status..."
-sudo systemctl status nginx --no-pager
-
 # Show status
 echo "📊 Application status:"
 pm2 status
-echo "📊 Nginx status:"
-sudo systemctl status nginx --no-pager
 
-echo "✅ Deployment completed successfully!"
-echo "🌐 API is available at: https://server.ekowlabs.space"
+echo "✅ Application deployment completed successfully!"
+echo "🌐 Application is running on port 5000"
 echo "📊 PM2 logs: pm2 logs kulobal-api"
 echo "🔄 Restart app: pm2 restart kulobal-api"
-echo "🔄 Restart nginx: sudo systemctl restart nginx"
+echo ""
+echo "📋 Manual nginx setup required:"
+echo "1. Copy ~/nginx-config/kulobal-api.conf to /etc/nginx/sites-available/"
+echo "2. Enable: sudo ln -sf /etc/nginx/sites-available/kulobal-api /etc/nginx/sites-enabled/"
+echo "3. Test: sudo nginx -t"
+echo "4. Restart: sudo systemctl restart nginx"

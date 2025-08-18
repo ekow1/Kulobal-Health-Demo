@@ -64,6 +64,15 @@ app.get('/', (c) => {
   });
 });
 
+// Test endpoint directly in main app
+app.get('/test', (c) => {
+  return c.json({
+    success: true,
+    message: 'Main app test endpoint working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.route('/api/auth', authRouter);
 app.route('/api/payments', paymentRouter);

@@ -17,6 +17,10 @@
 /.next/
 /out/
 
+# Allow built files for deployment (these will be force-added)
+!.next/
+!api/dist/
+
 # production
 /build
 
@@ -51,7 +55,7 @@ nul
 db/*.json
 
 # Build outputs
-api/dist/
+# api/dist/  # Commented out to allow deployment
 dist/
 
 # Logs

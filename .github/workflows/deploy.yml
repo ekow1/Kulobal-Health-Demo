@@ -32,7 +32,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .next api/dist
+        git add -f .next api/dist
         git commit -m "Add built files for deployment" || echo "No changes to commit"
         git push
 

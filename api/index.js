@@ -53,6 +53,7 @@ app.get('/', (c) => {
   return c.json({
     success: true,
     message: 'Kulobal Health API',
+    mongo: process.env.MONGODB_URI,
     version: '1.0.0',
     endpoints: {
       health: '/health',

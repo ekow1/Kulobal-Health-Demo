@@ -34,7 +34,7 @@ const corsOrigins = process.env.CORS_ORIGIN
   : ['http://localhost:3000', 'https://demo.ekowlabs.space','https://frontend.ekowlabs.space'];
 
 app.use('*', cors({
-  origin: corsOrigins,
+  origin: ['http://localhost:3000', 'https://demo.ekowlabs.space','https://frontend.ekowlabs.space','https://server.ekowlabs.space'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true

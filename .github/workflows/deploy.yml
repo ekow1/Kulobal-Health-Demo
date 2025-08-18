@@ -9,45 +9,45 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
+      
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: api/package-lock.json
-
+        
     - name: Install dependencies
       run: |
         cd api
         npm ci
-
+        
     - name: Build application
       run: |
         cd api
         npm run build
-
+        
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        passphrase: ${{ secrets.VPS_PASSPHRASE }}
+        passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
         port: ${{ secrets.VPS_PORT }}
         script: |
-          # Remove old deployment and create fresh folder
+          # Remove existing directory completely and create fresh
           rm -rf ~/kulobal-health-demo
           mkdir -p ~/kulobal-health-demo
           cd ~/kulobal-health-demo
-
-          # Clone the repo
+          
+          # Clone the repository
           git clone https://github.com/ekow1/Kulobal-Health-Demo.git .
-
+          
           # Create .env file from GitHub secrets
           cat > api/.env << EOF
           MONGODB_URI=${{ secrets.MONGODB_URI }}
@@ -56,20 +56,10 @@ jobs:
           PORT=5000
           NODE_ENV=production
           EOF
-
+          
+          # Navigate to api directory and deploy
           cd api
-
-          # Build Docker image
-          docker build -f Dockerfile.backend -t kulobal-backend:latest .
-
-          # Remove old stack if exists
           docker stack rm kulobal-stack || true
-
-          # Optional: ensure overlay network exists before deploying
-          docker network create --driver overlay --attachable kulobal-network || true
-
-          # Deploy stack
+          docker build -f Dockerfile.backend -t kulobal-backend:latest .
           docker stack deploy -c docker-compose.yml kulobal-stack
-
-          # Cleanup dangling images
           docker system prune -f

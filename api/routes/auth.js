@@ -183,7 +183,7 @@ authRouter.post('/login', async (c) => {
 });
 
 // Get current user profile
-authRouter.get('/profile', auth, async (c) => {
+authRouter.get('/profile',  async (c) => {
   try {
     const user = c.get('user');
     

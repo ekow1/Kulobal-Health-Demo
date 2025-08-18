@@ -46,7 +46,16 @@ jobs:
           cd ~/kulobal-health-demo
           
           # Clone the repository
-          git clone https://github.com/${{ github.repository }}.git .
+          git clone https://github.com/ekow1/Kulobal-Health-Demo.git .
+          
+          # Create .env file from GitHub secrets
+          cat > api/.env << EOF
+          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          CORS_ORIGIN=https://demo.ekowlabs.space
+          PORT=5000
+          NODE_ENV=production
+          EOF
           
           # Navigate to api directory and deploy
           cd api

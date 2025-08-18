@@ -86,7 +86,7 @@ const userSchema = new Schema({
   timestamps: true,
   toJSON: {
     transform: function(doc, ret) {
-      const { password, ...userWithoutPassword } = ret as any;
+      const { password, ...userWithoutPassword } = ret;
       return userWithoutPassword;
     }
   }

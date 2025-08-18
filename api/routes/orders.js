@@ -133,7 +133,7 @@ orderRouter.get('/', auth, requireRole(['admin']), async (c) => {
     const startDate = c.req.query('startDate');
     const endDate = c.req.query('endDate');
     
-    const query: any = {};
+    const query = {};
     
     if (status) {
       query.status = status;
@@ -193,7 +193,7 @@ orderRouter.get('/my-orders', auth, async (c) => {
     const limit = parseInt(c.req.query('limit') || '10');
     const status = c.req.query('status');
     
-    const query: any = { userId: user._id };
+    const query = { userId: user._id };
     
     if (status) {
       query.status = status;

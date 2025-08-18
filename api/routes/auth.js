@@ -139,7 +139,7 @@ authRouter.post('/login', async (c) => {
     await user.save();
     
     // Set HTTP-only cookie with userId
-    c.header('Set-Cookie', `userId=${(user._id as any).toString()}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`);
+    c.header('Set-Cookie', `userId=${(user._id ).toString()}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`);
     
     return c.json({
       success: true,
@@ -205,7 +205,7 @@ authRouter.put('/profile', auth, async (c) => {
       'streetAddress', 'gpsAddress'
     ];
     
-    const updateData: any = {};
+    const updateData = {};
     allowedFields.forEach(field => {
       if (body[field] !== undefined) {
         updateData[field] = body[field];
@@ -290,7 +290,7 @@ authRouter.get('/users', auth, requireRole(['admin']), async (c) => {
     const role = c.req.query('role');
     const search = c.req.query('search');
     
-    const query: any = {};
+    const query = {};
     
     if (role) {
       query.role = role;

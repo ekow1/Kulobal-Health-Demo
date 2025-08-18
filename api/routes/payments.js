@@ -70,7 +70,7 @@ const updatePaymentStatusSchema = z.object({
 });
 
 // Generate transaction ID
-const generateTransactionId = (): string => {
+const generateTransactionId = () => {
   const timestamp = Date.now().toString(36);
   const randomStr = Math.random().toString(36).substring(2, 8);
   return `TXN_${timestamp}_${randomStr.toUpperCase()}`;
@@ -199,7 +199,7 @@ paymentRouter.get('/', auth, requireRole(['admin']), async (c) => {
     const paymentType = c.req.query('paymentType');
     const userId = c.req.query('userId');
     
-    const query: any = {};
+    const query = {};
     
     if (status) {
       query.status = status;
@@ -253,7 +253,7 @@ paymentRouter.get('/my-payments', auth, async (c) => {
     const limit = parseInt(c.req.query('limit') || '10');
     const status = c.req.query('status');
     
-    const query: any = { userId: user._id };
+    const query = { userId: user._id };
     
     if (status) {
       query.status = status;

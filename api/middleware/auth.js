@@ -1,18 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 
-interface JWTPayload {
-  userId: string;
-  email: string;
-  role: string;
-}
-
-declare module 'hono' {
-  interface ContextVariableMap {
-    user: any;
-  }
-}
-
 export const auth = async (c, next) => {
   try {
     // Get userId from cookie

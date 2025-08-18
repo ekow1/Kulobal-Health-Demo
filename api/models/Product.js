@@ -1,35 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IProduct extends Document {
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  category: string;
-  subcategory?: string;
-  brand: string;
-  images: string[];
-  stock: number;
-  sku: string;
-  barcode?: string;
-  weight?: number;
-  dimensions?: {
-    length: number;
-    width: number;
-    height: number;
-  };
-  isActive: boolean;
-  isFeatured: boolean;
-  isOnSale: boolean;
-  salePercentage?: number;
-  tags: string[];
-  specifications?: Record<string, any>;
-  supplierId: mongoose.Types.ObjectId;
-  rating?: number;
-  reviewCount?: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 
 const dimensionsSchema = new Schema({
   length: { type: Number, min: 0 },
@@ -37,7 +8,7 @@ const dimensionsSchema = new Schema({
   height: { type: Number, min: 0 }
 });
 
-const productSchema = new Schema<IProduct>({
+const productSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -165,4 +136,4 @@ productSchema.virtual('salePrice').get(function() {
 productSchema.set('toJSON', { virtuals: true });
 productSchema.set('toObject', { virtuals: true });
 
-export const Product = mongoose.model<IProduct>('Product', productSchema);
+export const Product = mongoose.model('Product', productSchema);

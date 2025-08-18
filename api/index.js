@@ -39,7 +39,7 @@ app.use('*', cors({
 }));
 
 // Health check endpoint
-app.get('/', (c) => {
+app.get('/health', (c) => {
   return c.json({
     success: true,
     message: 'Kulobal Health API is running',

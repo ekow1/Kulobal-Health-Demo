@@ -85,14 +85,19 @@ jobs:
             git reset --hard origin/main
           fi
           
-          # Check if Docker Compose is available
-          if ! command -v docker-compose &> /dev/null; then
+          # Check if Docker Compose is available (try both old and new syntax)
+          if command -v docker-compose &> /dev/null; then
+            echo "Docker Compose (legacy) available"
+            DOCKER_COMPOSE_CMD="docker-compose"
+          elif docker compose version &> /dev/null; then
+            echo "Docker Compose (new) available"
+            DOCKER_COMPOSE_CMD="docker compose"
+          else
             echo "Installing Docker Compose..."
             curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
             echo "Docker Compose installed successfully"
-          else
-            echo "Docker Compose already available"
+            DOCKER_COMPOSE_CMD="docker-compose"
           fi
           
           # Create .env file from GitHub secrets
@@ -115,10 +120,10 @@ jobs:
           chmod 600 .env
           
           echo "Stopping containers..."
-          docker-compose down --remove-orphans || echo "No containers to stop"
+          $DOCKER_COMPOSE_CMD down --remove-orphans || echo "No containers to stop"
           
           echo "Building containers..."
-          if docker-compose build --no-cache; then
+          if $DOCKER_COMPOSE_CMD build --no-cache; then
             echo "✅ Containers built successfully"
           else
             echo "❌ Container build failed"
@@ -126,7 +131,7 @@ jobs:
           fi
           
           echo "Starting containers..."
-          if docker-compose up -d; then
+          if $DOCKER_COMPOSE_CMD up -d; then
             echo "✅ Containers started successfully"
           else
             echo "❌ Container startup failed"
@@ -137,14 +142,14 @@ jobs:
           sleep 15
           
           echo "Checking container status..."
-          docker-compose ps
+          $DOCKER_COMPOSE_CMD ps
           
           # Check if all containers are running
-          if docker-compose ps | grep -q "Up"; then
+          if $DOCKER_COMPOSE_CMD ps | grep -q "Up"; then
             echo "✅ All containers are running"
           else
             echo "❌ Some containers failed to start"
-            docker-compose logs
+            $DOCKER_COMPOSE_CMD logs
             exit 1
           fi
           

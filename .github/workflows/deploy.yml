@@ -1,36 +1,15 @@
-name: Deploy Backend API
+name: Deploy to VPS (No Docker)
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: api/package-lock.json
-        
-    - name: Install dependencies
-      run: |
-        cd api
-        npm ci
-        
-    - name: Build application
-      run: |
-        cd api
-        npm run build
-        
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -38,28 +17,25 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
         passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
-        port: ${{ secrets.VPS_PORT }}
         script: |
-          # Remove existing directory completely and create fresh
-          rm -rf ~/kulobal-health-demo
-          mkdir -p ~/kulobal-health-demo
-          cd ~/kulobal-health-demo
+          echo "🚀 Starting deployment without Docker..."
           
-          # Clone the repository
-          git clone https://github.com/ekow1/Kulobal-Health-Demo.git .
+          # Set environment variables
+          export MONGODB_URI="${{ secrets.MONGODB_URI }}"
+          export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           
-          # Create .env file from GitHub secrets
-          cat > api/.env << EOF
-          MONGODB_URI=${{ secrets.MONGODB_URI }}
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          CORS_ORIGIN=https://demo.ekowlabs.space
-          PORT=5000
-          NODE_ENV=production
-          EOF
+          # Download deployment script
+          echo "📥 Downloading deployment script..."
+          wget -O deploy-no-docker.sh https://raw.githubusercontent.com/ekow1/Kulobal-Health-Demo/main/deploy-no-docker.sh
+          chmod +x deploy-no-docker.sh
           
-          # Navigate to api directory and deploy
-          cd api
-          docker stack rm kulobal-stack || true
-          docker build -f Dockerfile.backend -t kulobal-backend:latest .
-          docker stack deploy -c docker-compose.yml kulobal-stack
-          docker system prune -f
+          # Run deployment
+          echo "🚀 Running deployment..."
+          ./deploy-no-docker.sh
+          
+          # Show final status
+          echo "📊 Final application status:"
+          pm2 status
+          
+          echo "✅ Deployment completed successfully!"
+          echo "🌐 API is available at: https://server.ekowlabs.space"

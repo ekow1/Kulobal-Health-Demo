@@ -47,6 +47,7 @@ export const auth = async (c: Context, next: Next) => {
     c.set('user', user);
     
     await next();
+    return;
   } catch (error) {
     console.error('Auth middleware error:', error);
     return c.json({ 
@@ -74,6 +75,7 @@ export const optionalAuth = async (c: Context, next: Next) => {
     // Continue without authentication
     await next();
   }
+  return;
 };
 
 export const requireRole = (roles: string[]) => {
@@ -95,5 +97,6 @@ export const requireRole = (roles: string[]) => {
     }
     
     await next();
+    return;
   };
 };

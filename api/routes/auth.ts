@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User.js';
-import { auth, requireRole } from '../middleware/auth.js';
+import { User } from '../models/User';
+import { auth, requireRole } from '../middleware/auth';
 import { z } from 'zod';
 
 const authRouter = new Hono();
@@ -29,14 +29,14 @@ const loginSchema = z.object({
 });
 
 // Generate JWT token
-const generateToken = (userId, email, role) => {
+const generateToken = (userId: string, email: string, role: string): string => {
   const secret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
   
   return jwt.sign(
     { userId, email, role },
     secret,
-    { expiresIn }
+    { expiresIn: expiresIn as any }
   );
 };
 

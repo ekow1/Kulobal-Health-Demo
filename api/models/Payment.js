@@ -1,81 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IPaymentMethod {
-  type: 'mobile_money' | 'card' | 'bank_transfer' | 'cash';
-  network?: 'mtn' | 'vodafone' | 'telecel' | 'airtel';
-  phoneNumber?: string;
-  accountName?: string;
-  networkDisplayName?: string;
-  cardNumber?: string;
-  bankName?: string;
-  accountNumber?: string;
-}
-
-export interface IShippingDetails {
-  pharmacyName: string;
-  phoneNumber: string;
-  pharmacyEmail: string;
-  pharmacyLocation: string;
-  streetAddress?: string;
-  gpsAddress?: string;
-}
-
-export interface IOrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  category?: string;
-  image?: string;
-}
-
-export interface IPaymentMetadata {
-  orderId: string;
-  paymentType: 'full-payment' | 'partial-payment' | 'deposit' | 'installment-payment';
-  paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money' | 'cash-on-delivery' | 'pay-online';
-  paymentOption?: string; // card, mobile_money, etc.
-  pharmacyName: string;
-  shippingDetails: IShippingDetails;
-  items: IOrderItem[];
-  itemsSummary: string;
-  notes?: string;
-  // Installment fields
-  installmentPercentage?: number;
-  remainingBalance?: number;
-  // Card specific fields
-  cardType?: string;
-  last4Digits?: string;
-  cardholderName?: string;
-  // Mobile money specific fields
-  network?: string;
-  phoneNumber?: string;
-  // Order details (added when order is created)
-  orderDetails?: {
-    orderId: string;
-    orderNumber: string;
-    total: number;
-    items: any[];
-  };
-}
-
-export interface IPayment extends Document {
-  userId: mongoose.Types.ObjectId;
-  transactionId: string;
-  amount: number;
-  currency: string;
-  paymentType: string;
-  paymentMethod: IPaymentMethod;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  description: string;
-  metadata: IPaymentMetadata;
-  gatewayResponse?: any;
-  refundAmount?: number;
-  refundReason?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const paymentMethodSchema = new Schema<IPaymentMethod>({
+const paymentMethodSchema = new Schema({
   type: {
     type: String,
     enum: ['mobile_money', 'card', 'bank_transfer', 'cash'],
@@ -93,7 +18,7 @@ const paymentMethodSchema = new Schema<IPaymentMethod>({
   accountNumber: String
 });
 
-const shippingDetailsSchema = new Schema<IShippingDetails>({
+const shippingDetailsSchema = new Schema({
   pharmacyName: {
     type: String,
     required: true,
@@ -118,7 +43,7 @@ const shippingDetailsSchema = new Schema<IShippingDetails>({
   gpsAddress: String
 });
 
-const orderItemSchema = new Schema<IOrderItem>({
+const orderItemSchema = new Schema({
   id: {
     type: String,
     required: true
@@ -142,7 +67,7 @@ const orderItemSchema = new Schema<IOrderItem>({
   image: String
 });
 
-const paymentMetadataSchema = new Schema<IPaymentMetadata>({
+const paymentMetadataSchema = new Schema({
   orderId: {
     type: String,
     required: true
@@ -192,7 +117,7 @@ const paymentMetadataSchema = new Schema<IPaymentMetadata>({
   }
 });
 
-const paymentSchema = new Schema<IPayment>({
+const paymentSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -252,4 +177,4 @@ paymentSchema.index({ status: 1 });
 paymentSchema.index({ createdAt: -1 });
 paymentSchema.index({ 'metadata.orderId': 1 });
 
-export const Payment = mongoose.model<IPayment>('Payment', paymentSchema);
+export const Payment = mongoose.model('Payment', paymentSchema);

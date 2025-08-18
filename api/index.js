@@ -9,10 +9,10 @@ import { timing } from 'hono/timing';
 
 import dotenv from 'dotenv';
 
-import { connectDB } from './config/database';
-import authRouter from './routes/auth';
-import paymentRouter from './routes/payments';
-import orderRouter from './routes/orders';
+import { connectDB } from './config/database.js';
+import authRouter from './routes/auth.js';
+import paymentRouter from './routes/payments.js';
+import orderRouter from './routes/orders.js';
 
 // Load environment variables
 dotenv.config();

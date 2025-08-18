@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { Order } from '../models/Order';
-import { Payment } from '../models/Payment';
-import { auth, requireRole } from '../middleware/auth';
+import { Order } from '../models/Order.js';
+import { Payment } from '../models/Payment.js';
+import { auth, requireRole } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const orderRouter = new Hono();
@@ -275,7 +275,7 @@ orderRouter.patch('/:id/status', auth, requireRole(['admin']), async (c) => {
     const body = await c.req.json();
     const validatedData = updateOrderStatusSchema.parse(body);
     
-    const updateData: any = {
+    const updateData = {
       status: validatedData.status,
       updatedAt: new Date()
     };
@@ -439,11 +439,11 @@ orderRouter.get('/stats/overview', auth, requireRole(['admin']), async (c) => {
       byStatus: ordersByStatus.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       byPaymentMethod: ordersByPaymentMethod.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       recentOrders
     };
     

@@ -1,6 +1,5 @@
-import { Context, Next } from 'hono';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 
 interface JWTPayload {
   userId: string;
@@ -14,7 +13,7 @@ declare module 'hono' {
   }
 }
 
-export const auth = async (c: Context, next: Next) => {
+export const auth = async (c, next) => {
   try {
     // Get userId from cookie
     const userId = c.req.header('Cookie')?.split('userId=')[1]?.split(';')[0];
@@ -57,7 +56,7 @@ export const auth = async (c: Context, next: Next) => {
   }
 };
 
-export const optionalAuth = async (c: Context, next: Next) => {
+export const optionalAuth = async (c, next) => {
   try {
     // Get userId from cookie
     const userId = c.req.header('Cookie')?.split('userId=')[1]?.split(';')[0];
@@ -78,8 +77,8 @@ export const optionalAuth = async (c: Context, next: Next) => {
   return;
 };
 
-export const requireRole = (roles: string[]) => {
-  return async (c: Context, next: Next) => {
+export const requireRole = (roles) => {
+  return async (c, next) => {
     const user = c.get('user');
     
     if (!user) {

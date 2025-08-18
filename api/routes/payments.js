@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { Payment } from '../models/Payment';
-import { Order } from '../models/Order';
-import { auth, requireRole } from '../middleware/auth';
+import { Payment } from '../models/Payment.js';
+import { Order } from '../models/Order.js';
+import { auth, requireRole } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const paymentRouter = new Hono();
@@ -94,7 +94,7 @@ paymentRouter.post('/', auth, async (c) => {
       currency: validatedData.currency,
       paymentType: validatedData.paymentType,
       paymentMethod: validatedData.paymentMethod,
-      status: 'completed' as const, // Set status to completed immediately
+      status: 'completed', // Set status to completed immediately
       description: validatedData.description,
       metadata: validatedData.metadata || {},
     };
@@ -136,7 +136,7 @@ paymentRouter.post('/', auth, async (c) => {
           amount: validatedData.amount,
           currency: validatedData.currency,
           transactionId: transactionId,
-          status: 'completed' as const,
+          status: 'completed',
         },
         notes: validatedData.metadata.notes,
         tracking: [{
@@ -414,11 +414,11 @@ paymentRouter.get('/stats/overview', auth, requireRole(['admin']), async (c) => 
       byType: paymentsByType.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       byStatus: paymentsByStatus.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       recentPayments
     };
     

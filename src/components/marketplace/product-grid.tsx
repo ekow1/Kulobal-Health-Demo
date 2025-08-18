@@ -3,29 +3,20 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMarketplaceStore } from "@/lib/store";
+import { useMarketplaceStore } from "@/store/product";
 import { LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ProductGrid() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const { products, selectedCategory, searchQuery, addToCart } =
-    useMarketplaceStore();
+  const { products, addToCart } = useMarketplaceStore();
 
   const handleAddToCart = (e: React.MouseEvent, productId: string) => {
     e.preventDefault();
     addToCart(productId);
   };
 
-  const filteredProducts = products.filter((product) => {
-    const matchesCategory =
-      selectedCategory === "All Products" ||
-      product.category === selectedCategory;
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredProducts = products;
 
   return (
     <div className="space-y-4">

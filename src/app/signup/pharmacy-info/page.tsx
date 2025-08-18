@@ -52,10 +52,10 @@ export default function PharmacyInfo() {
     PasswordChecker(PharmacyData.password, confirmedPassword);
     console.log("Updating user data with:", PharmacyData);
     updateUserData({
-      firstName: PharmacyData.firstName,
-      lastName:PharmacyData.firstName,
+      businessName: PharmacyData.firstName,
+      ownerName: PharmacyData.firstName,
       email: PharmacyData.email,
-      phoneNumber: PharmacyData.phoneNumber,
+      telephone: PharmacyData.phoneNumber,
       password: PharmacyData.password,
     });
     createUser().then(() => {

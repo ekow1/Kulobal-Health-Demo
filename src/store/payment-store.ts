@@ -26,7 +26,7 @@ interface PaymentState {
   isLoading: boolean
   error: string | null
   filterType: "all" | "card" | "mobile_money" | "cash on delivery" | "credit" | null
-  filterStatus: "completed" | "pending" | "failed" | "cancelled" | null
+  filterStatus: Payment["status"] | null
   filterUserId: string | null
 
   // Actions
@@ -57,7 +57,7 @@ interface PaymentState {
 
   // Filters
   setFilterType: (type: "all" | "card" | "mobile_money" | "cash on delivery" | "credit") => void
-  setFilterStatus: (status: "completed" | "pending" | "failed" | "cancelled" | null) => void
+  setFilterStatus: (status: Payment["status"] | null) => void
   setFilterUserId: (userId: string | null) => void
   clearFilters: () => void
 
@@ -77,7 +77,7 @@ export const usePaymentStore = create<PaymentState>()(
         isLoading: false,
         error: null,
         filterType: null,
-        filterStatus: null,
+        filterStatus: null as Payment["status"] | null,
         filterUserId: null,
 
         // Fetch actions
@@ -327,7 +327,7 @@ export const usePaymentStore = create<PaymentState>()(
               paymentMethod: {
                 type: paymentData.paymentType === "card" ? "card" : 
                       paymentData.paymentType === "mobile_money" ? "mobile_money" : "cash",
-              },
+              } as any,
               description: paymentData.description,
               metadata: {
                 orderId: `ORD_${Date.now()}`,
@@ -347,7 +347,7 @@ export const usePaymentStore = create<PaymentState>()(
               },
             }
 
-            const response = await apiClient.createPayment(apiPaymentData)
+            const response = await apiClient.createPayment(apiPaymentData as any)
             
             if (!response.success || !response.data?.payment) {
               throw new Error(response.message || "Failed to create payment")
@@ -397,14 +397,14 @@ export const usePaymentStore = create<PaymentState>()(
                 type: paymentType === "card" ? "card" : 
                       paymentType === "mobile_money" ? "mobile_money" : "cash",
                 // Add card details if available in metadata
-                ...(metadata?.cardType && { cardType: metadata.cardType }),
-                ...(metadata?.last4Digits && { last4Digits: metadata.last4Digits }),
-                ...(metadata?.cardholderName && { cardholderName: metadata.cardholderName }),
+                ...(metadata?.cardType ? { cardType: metadata.cardType as any } : {}),
+                ...(metadata?.last4Digits ? { last4Digits: metadata.last4Digits as any } : {}),
+                ...(metadata?.cardholderName ? { cardholderName: metadata.cardholderName as any } : {}),
                 // Add mobile money details if available in metadata
-                ...(metadata?.network && { network: metadata.network }),
-                ...(metadata?.phoneNumber && { phoneNumber: metadata.phoneNumber }),
-                ...(metadata?.accountName && { accountName: metadata.accountName }),
-                ...(metadata?.networkDisplayName && { networkDisplayName: metadata.networkDisplayName }),
+                ...(metadata?.network ? { network: metadata.network as any } : {}),
+                ...(metadata?.phoneNumber ? { phoneNumber: metadata.phoneNumber as any } : {}),
+                ...(metadata?.accountName ? { accountName: metadata.accountName as any } : {}),
+                ...(metadata?.networkDisplayName ? { networkDisplayName: metadata.networkDisplayName as any } : {}),
               },
               description,
               metadata: {
@@ -424,7 +424,7 @@ export const usePaymentStore = create<PaymentState>()(
               },
             }
 
-            const response = await apiClient.createPayment(paymentData)
+            const response = await apiClient.createPayment(paymentData as any)
             
             if (!response.success || !response.data?.payment) {
               throw new Error(response.message || "Failed to create payment")
@@ -470,9 +470,9 @@ export const usePaymentStore = create<PaymentState>()(
             console.warn("updateStatus not fully implemented in API yet")
             
             set((state) => ({
-              payments: state.payments.map((p) => (p.id === id ? { ...p, status, metadata } : p)),
-              filteredPayments: state.filteredPayments.map((p) => (p.id === id ? { ...p, status, metadata } : p)),
-              selectedPayment: state.selectedPayment?.id === id ? { ...state.selectedPayment, status, metadata } : state.selectedPayment,
+              payments: state.payments.map((p) => (p.id === id ? { ...p, status, metadata: metadata as any } : p)),
+              filteredPayments: state.filteredPayments.map((p) => (p.id === id ? { ...p, status, metadata: metadata as any } : p)),
+              selectedPayment: state.selectedPayment?.id === id ? { ...state.selectedPayment, status, metadata: metadata as any } : state.selectedPayment,
               isLoading: false,
             }))
           } catch (error) {

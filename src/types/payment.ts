@@ -55,6 +55,7 @@ export interface Payment {
     accountName?: string
     networkDisplayName?: string
     cardNumber?: string
+    cardType?: string
     bankName?: string
     accountNumber?: string
   }

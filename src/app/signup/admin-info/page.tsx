@@ -55,10 +55,9 @@ export default function AdminInfo() {
 
     console.log("adminData", adminData);
     updateUserData({
-      firstName: adminData.firstName,
-      lastName: adminData.lastName,
+      ownerName: `${adminData.firstName} ${adminData.lastName}`,
       email: adminData.email,
-      phoneNumber: adminData.phoneNumber,
+      telephone: adminData.phoneNumber,
       password: adminData.password,
     });
     router.push(`/signup/verify-otp?email=${adminData.email}`);

@@ -2,25 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMarketplaceStore } from "@/lib/store";
+import { useCartStore } from "@/store/cart-store";
+import { useMarketplaceStore } from "@/store/product";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
 export default function CartPage() {
-  const { cart, products, removeFromCart, updateQuantity } =
-    useMarketplaceStore();
-
-  const cartItems = cart.map((item) => {
-    const product = products.find((p) => p.id === item.productId);
-    return { ...item, product };
-  });
+  const { items: cartItems, removeItem, updateQuantity } = useCartStore();
+  const { products } = useMarketplaceStore();
 
   const subtotal = cartItems.reduce((sum, item) => {
-    return sum + (item.product?.price ?? 0) * item.quantity;
+    return sum + (item.price ?? 0) * item.quantity;
   }, 0);
-
-  alert(cartItems)
 
   const tax = subtotal * 0.03;
   const total = subtotal + tax;
@@ -38,14 +32,14 @@ export default function CartPage() {
 
             {cartItems.map((item) => (
               <div
-                key={item.productId}
+                key={item.id}
                 className="p-4 border-b bg-white dark:bg-background"
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="bg-gray-100 p-4 rounded-md w-full sm:w-36 h-36 flex items-center justify-center dark:bg-neutral-900">
                     <Image
-                      src={item.product?.images[0] ?? "/placeholder.svg"}
-                      alt={item.product?.name ?? "Product"}
+                      src={item.product?.images?.[0] ?? "/placeholder.svg"}
+                      alt={item.name ?? "Product"}
                       width={120}
                       height={120}
                       className="object-contain"
@@ -55,7 +49,7 @@ export default function CartPage() {
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl font-bold">
-                        {item.product?.name}
+                        {item.name}
                       </h3>
                       <p className="text-gray-600 mt-1">
                         {item.product?.brand}
@@ -63,7 +57,7 @@ export default function CartPage() {
                     </div>
 
                     <button
-                      onClick={() => removeFromCart(item.productId)}
+                      onClick={() => removeItem(item.id)}
                       className="text-primary-600 text-sm font-medium mt-2 w-fit"
                     >
                       Remove from cart
@@ -73,7 +67,7 @@ export default function CartPage() {
                   <div className="flex flex-col items-end justify-between">
                     <span className="font-bold text-lg">
                       GH₵{" "}
-                      {((item.product?.price ?? 0) * item.quantity).toFixed(2)}
+                      {((item.price ?? 0) * item.quantity).toFixed(2)}
                     </span>
 
                     <div className="flex items-center mt-2 bg-neutral-500 dark:bg-neutral-900 rounded-full">
@@ -81,7 +75,7 @@ export default function CartPage() {
                         className="w-9 h-9 p-[5px] flex items-center bg-neutral-500 justify-center rounded-full"
                         onClick={() =>
                           updateQuantity(
-                            item.productId,
+                            item.id,
                             Math.max(1, item.quantity - 1)
                           )
                         }
@@ -94,7 +88,7 @@ export default function CartPage() {
                       <button
                         className="w-9 h-9 bg-neutral-500 flex items-center justify-center rounded-full"
                         onClick={() =>
-                          updateQuantity(item.productId, item.quantity + 1)
+                          updateQuantity(item.id, item.quantity + 1)
                         }
                       >
                         <span className="flex w-7 h-7 p-[15px] items-center justify-center rounded-full bg-[#F6F6F7] dark:bg-[#2e2e2e]">

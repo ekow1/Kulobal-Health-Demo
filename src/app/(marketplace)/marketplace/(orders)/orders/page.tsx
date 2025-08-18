@@ -5,8 +5,8 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, Clock, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Sidebar from "../sidebar";
-import { useMarketplaceStore } from "@/lib/store";
-import { useState } from "react";
+import { useOrdersStore } from "@/store/orders-store";
+import { useState, useEffect } from "react";
 
 const getStatusClasses = (status: string) => {
   switch (status) {
@@ -22,8 +22,12 @@ const getStatusClasses = (status: string) => {
 };
 
 export default function OrderHistory() {
-  const { orders } = useMarketplaceStore();
+  const { orders, fetchOrders, isLoading } = useOrdersStore();
   const [filterStatus, setFilterStatus] = useState<string>("all");
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const filterOptions = [
     { label: "All Orders", value: "all" },
@@ -70,10 +74,14 @@ export default function OrderHistory() {
         </div>
 
         <div className="space-y-4">
-          {filteredOrders.length > 0 ? (
+          {isLoading ? (
+            <div className="text-center py-8 text-gray-500">
+              Loading orders...
+            </div>
+          ) : filteredOrders.length > 0 ? (
             filteredOrders.map((order) => (
               <div
-                key={order.id}
+                key={order._id}
                 className="border rounded-lg overflow-hidden bg-white dark:bg-background"
               >
                 <div className="p-4 flex flex-col md:flex-row gap-4">
@@ -92,7 +100,7 @@ export default function OrderHistory() {
                       {order.items.length} items
                     </h3>
                     <p className="text-sm text-gray-500 mt-1">
-                      Order No. #{order.id}
+                      Order No. #{order.orderNumber}
                     </p>
 
                     <div
@@ -118,7 +126,7 @@ export default function OrderHistory() {
                   </div>
 
                   <div className="flex items-center">
-                    <Link href={`/marketplace/orders/${order.id}`}>
+                    <Link href={`/marketplace/orders/${order._id}`}>
                       <Button
                         variant="outline"
                         className="text-emerald-500 border-emerald-500 hover:bg-emerald-50"

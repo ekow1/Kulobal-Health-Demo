@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useMarketplaceStore } from "@/lib/store";
+import { useCartStore } from "@/store/cart-store";
+import { useMarketplaceStore } from "@/store/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,7 +54,8 @@ interface PaymentInfo {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, products } = useMarketplaceStore();
+  const { items: cartItems } = useCartStore();
+  const { products } = useMarketplaceStore();
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
     pharmacyName: "",
     phone: "",
@@ -86,13 +88,8 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Partial<ShippingInfo & PaymentInfo>>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const cartItems = cart.map((item) => {
-    const product = products.find((p) => p.id === item.productId);
-    return { ...item, product };
-  });
-
   const subtotal = cartItems.reduce((sum, item) => {
-    return sum + (item.product?.price || 0) * item.quantity;
+    return sum + (item.price || 0) * item.quantity;
   }, 0);
 
   const deliveryFee = 10;

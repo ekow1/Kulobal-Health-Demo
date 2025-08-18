@@ -1,52 +1,48 @@
 # Kulobal Health - Monorepo
 
-This is a monorepo containing the Kulobal Health platform with separate frontend and backend applications.
+This is a monorepo containing the Kulobal Health platform with separate frontend and backend applications, deployed on Vercel.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- Docker & Docker Compose
 - MongoDB database
 
 ### Local Development
 
 1. **Install dependencies:**
    ```bash
-   npm run install
+   # Install frontend dependencies
+   cd frontend
+   npm install
+   
+   # Install backend dependencies
+   cd ../api
+   npm install
    ```
 
 2. **Set up environment variables:**
    ```bash
+   # Backend environment
+   cd api
    cp env.example .env
    # Edit .env with your configuration
+   
+   # Frontend environment
+   cd ../frontend
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
    ```
 
-3. **Start development server:**
+3. **Start development servers:**
    ```bash
+   # Start backend (in api directory)
+   cd api
    npm run dev
-   ```
-
-4. **Build for production:**
-   ```bash
-   npm run build
-   ```
-
-### Docker Deployment
-
-1. **Build and run with Docker Compose:**
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **View logs:**
-   ```bash
-   docker-compose logs -f
-   ```
-
-3. **Stop services:**
-   ```bash
-   docker-compose down
+   
+   # Start frontend (in frontend directory)
+   cd ../frontend
+   npm run dev
    ```
 
 ## 📁 Project Structure
@@ -57,6 +53,7 @@ Kulobal-Health/
 │   ├── src/           # Source code
 │   ├── public/        # Static assets
 │   ├── package.json   # Frontend dependencies
+│   ├── vercel.json    # Vercel configuration
 │   └── ...
 ├── api/              # Hono Backend API
 │   ├── routes/       # API routes
@@ -64,13 +61,9 @@ Kulobal-Health/
 │   ├── middleware/   # Middleware
 │   ├── config/       # Database and configuration
 │   ├── package.json  # Backend dependencies
-│   ├── docker-compose.yml  # Backend deployment
-│   ├── nginx.conf    # Nginx configuration
+│   ├── vercel.json   # Vercel configuration
 │   └── ...
-├── docker-compose.yml  # Docker services configuration
-├── Dockerfile.backend  # Backend Docker image
-├── nginx.conf         # Nginx reverse proxy configuration
-├── ssl/               # SSL certificates directory
+├── vercel.json       # Root Vercel configuration
 └── README.md         # This file
 ```
 
@@ -112,26 +105,60 @@ cd api
 npm run build
 ```
 
-## Deployment
+## 🚀 Deployment with Vercel
 
-The backend API includes complete Docker and GitHub Actions setup for deployment to a VPS.
+This project is configured for deployment on Vercel with both frontend and backend.
 
-### Backend Deployment
+### Prerequisites
+- Vercel account
+- MongoDB database (MongoDB Atlas recommended)
 
+### Deployment Steps
+
+1. **Connect to Vercel:**
+   ```bash
+   # Install Vercel CLI
+   npm i -g vercel
+   
+   # Login to Vercel
+   vercel login
+   ```
+
+2. **Deploy the entire project:**
+   ```bash
+   # From the root directory
+   vercel
+   ```
+
+3. **Set environment variables in Vercel:**
+   - Go to your Vercel project dashboard
+   - Navigate to Settings > Environment Variables
+   - Add the following variables:
+     - `MONGODB_URI` - Your MongoDB connection string
+     - `JWT_SECRET` - Your JWT secret key
+     - `NODE_ENV` - Set to "production"
+
+### Separate Deployments
+
+You can also deploy frontend and backend separately:
+
+**Backend only:**
 ```bash
 cd api
-# Follow instructions in api/DEPLOYMENT.md
+vercel
 ```
 
-### Frontend Deployment
-
-The frontend can be deployed to any platform that supports Next.js (Vercel, Netlify, etc.).
+**Frontend only:**
+```bash
+cd frontend
+vercel
+```
 
 ## Environment Variables
 
 ### Frontend (.env.local)
 ```env
-NEXT_PUBLIC_API_URL=https://server.ekowlabs.space
+NEXT_PUBLIC_API_URL=https://your-backend-url.vercel.app
 ```
 
 ### Backend (.env)
@@ -145,14 +172,8 @@ JWT_SECRET=your-super-secret-jwt-key-here
 # API Configuration
 PORT=5000
 NODE_ENV=production
-CORS_ORIGIN=https://demo.ekowlabs.space
+CORS_ORIGIN=https://your-frontend-url.vercel.app
 ```
-
-### SSL Certificates
-
-Place your SSL certificates in the `ssl/` directory:
-- `ssl/cert.pem` - SSL certificate
-- `ssl/key.pem` - Private key
 
 ## 🌐 API Endpoints
 
@@ -163,24 +184,11 @@ Place your SSL certificates in the `ssl/` directory:
 - `POST /api/orders` - Create order
 - `GET /api/orders` - Get orders
 
-## 🚀 Deployment
-
-The project uses GitHub Actions for automated deployment to VPS.
-
-### Required GitHub Secrets:
-- `VPS_HOST` - VPS IP address
-- `VPS_USERNAME` - SSH username
-- `VPS_SSH_KEY` - SSH private key
-- `VPS_SSH_PASSPHRASE` - SSH key passphrase
-- `VPS_PORT` - SSH port (usually 22)
-- `MONGODB_URI` - MongoDB connection string
-- `JWT_SECRET` - JWT secret key
-
 ## Technologies
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS
 - **Backend**: Hono, TypeScript, MongoDB, JWT
-- **Deployment**: Docker, Docker Compose, Nginx, GitHub Actions
+- **Deployment**: Vercel
 
 ## 📝 License
 

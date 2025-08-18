@@ -1,74 +1,113 @@
-# KHS Pharma Store
+# Kulobal Health Backend API
 
-A modern pharmaceutical e-commerce platform built with Next.js, focusing on improving access to medicines in Africa.
+A Node.js backend API for the Kulobal Health platform built with Hono framework and MongoDB.
 
-## Features
+## 🚀 Quick Start
 
-- 🏪 Digital stock management
-- 💳 Secure payment integration with Selcom Pay
-- 📱 Mobile-first responsive design
-- 🚚 Delivery tracking system
-- 📊 Data-driven inventory management
-- 🔒 Counterfeit medicine prevention
+### Prerequisites
+- Node.js 18+
+- MongoDB database
+- Docker (for production deployment)
 
-## Tech Stack
+### Local Development
 
-- **Framework:** Next.js 14
-- **Styling:** Tailwind CSS
-- **Icons:** Custom SVG components
-- **UI Components:** Shadcn/ui
-- **Images:** Next.js Image Optimization
-- **Deployment:** Vercel
+1. **Install dependencies:**
+   ```bash
+   cd api
+   npm ci
+   ```
 
-## Getting Started
+2. **Set up environment variables:**
+   ```bash
+   cp env.example .env
+   # Edit .env with your configuration
+   ```
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/khspharmastore.git
-cd khspharmastore
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+The API will be available at `http://localhost:5000`
+
+### Production Deployment
+
+#### Using Docker
+
+1. **Build and run with Docker Compose:**
+   ```bash
+   docker compose up -d
+   ```
+
+2. **Or build manually:**
+   ```bash
+   docker build -f Dockerfile.backend -t kulobal-backend .
+   docker run -p 5000:5000 --env-file .env kulobal-backend
+   ```
+
+#### Using GitHub Actions
+
+The repository includes GitHub Actions for automatic deployment to VPS:
+
+1. Set up GitHub Secrets:
+   - `VPS_HOST`: Your VPS IP address
+   - `VPS_USERNAME`: SSH username
+   - `VPS_SSH_KEY`: Private SSH key
+   - `VPS_SSH_PASSPHRASE`: SSH key passphrase (if any)
+   - `VPS_PORT`: SSH port (usually 22)
+   - `MONGODB_URI`: MongoDB connection string
+   - `JWT_SECRET`: JWT secret key
+
+2. Push to `main` branch to trigger deployment
+
+## 📁 Project Structure
+
+```
+├── api/                    # Backend API code
+│   ├── config/            # Database configuration
+│   ├── middleware/        # Authentication middleware
+│   ├── models/           # MongoDB models
+│   ├── routes/           # API routes
+│   ├── package.json      # Backend dependencies
+│   └── tsconfig.json     # TypeScript configuration
+├── .github/workflows/    # GitHub Actions
+├── docker-compose.yml    # Docker Compose configuration
+├── Dockerfile.backend    # Backend Dockerfile
+└── package.json          # Root package.json
 ```
 
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
+## 🔧 API Endpoints
+
+- `GET /api/health` - Health check
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+- `GET /api/products` - Get products
+- `POST /api/orders` - Create order
+- `GET /api/payments` - Get payments
+
+## 🛠️ Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run install:all` - Install all dependencies
+
+## 🔒 Environment Variables
+
+Required environment variables:
+
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database
+JWT_SECRET=your-super-secret-jwt-key
+PORT=5000
+NODE_ENV=production
 ```
 
-3. Run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
+## 📦 Docker
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser.
+The backend is containerized using Docker:
 
-## Project Structure
+- **Development:** `docker compose up`
+- **Production:** `docker compose up -d`
 
-```
-src/
-├── components/        # React components
-├── app/              # App router pages
-├── lib/              # Utility functions
-└── styles/           # Global styles
-public/
-├── brands/           # Partner logos
-└── images/           # Static images
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact
-
-Project Link: [https://github.com/yourusername/khspharmastore](https://github.com/yourusername/khspharmastore)
+The container exposes port 5000 and includes all necessary dependencies.

@@ -42,7 +42,7 @@ jobs:
         script: |
           cd /opt/kulobal-health-demo/api
           git pull origin main
-          docker-compose down
-          docker-compose build --no-cache
-          docker-compose up -d
+          docker stack rm kulobal-stack || true
+          docker build -t kulobal-backend:latest .
+          docker stack deploy -c docker-compose.yml kulobal-stack
           docker system prune -f

@@ -4,7 +4,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: Dockerfile.frontend.optimized
     container_name: kulobal-frontend
     restart: unless-stopped
     environment:
@@ -16,7 +16,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile.backend.optimized
     container_name: kulobal-backend
     restart: unless-stopped
     environment:

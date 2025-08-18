@@ -27,6 +27,14 @@ jobs:
       run: |
         npm run build
         npm run build:api
+        
+    - name: Commit built files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .next api/dist
+        git commit -m "Add built files for deployment" || echo "No changes to commit"
+        git push
 
     - name: Test SSH Connection
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -75,15 +83,13 @@ jobs:
           cd "$DEPLOY_DIR"
           echo "Changed to directory: $(pwd)"
           
-          # Check if it's a git repository
-          if [ ! -d ".git" ]; then
-            echo "Cloning repository..."
-            git clone https://github.com/${{ github.repository }}.git .
-          else
-            echo "Pulling latest changes..."
-            git fetch origin
-            git reset --hard origin/main
-          fi
+          # Clone repository and copy built files
+          echo "Cloning repository..."
+          git clone https://github.com/${{ github.repository }}.git .
+          
+          # Copy built files from GitHub Actions workspace
+          echo "Copying built files..."
+          # The built files will be available in the repository
           
           # Check if Docker Compose is available (prioritize new syntax)
           if docker compose version &> /dev/null; then

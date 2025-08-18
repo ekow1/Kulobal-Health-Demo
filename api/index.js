@@ -7,6 +7,10 @@ import authRouter from './routes/auth.js';
 
 const app = new Hono();
 
+// Debug: Log router import
+console.log('Auth router imported:', typeof authRouter);
+console.log('Auth router methods:', Object.keys(authRouter));
+
 // CORS configuration
 app.use('*', cors({
   origin: ['http://localhost:3000', 'https://demo.ekowlabs.space'],

@@ -62,14 +62,17 @@ jobs:
           echo "Current user: $(whoami)"
           echo "Current directory: $(pwd)"
           
+          # Set deployment directory in user's home
+          DEPLOY_DIR="$HOME/kulobal-health-demo"
+          echo "Using deployment directory: $DEPLOY_DIR"
+          
           # Check if deployment directory exists
-          if [ ! -d "/opt/kulobal-health-demo" ]; then
+          if [ ! -d "$DEPLOY_DIR" ]; then
             echo "Creating deployment directory..."
-            sudo mkdir -p /opt/kulobal-health-demo
-            sudo chown $USER:$USER /opt/kulobal-health-demo
+            mkdir -p "$DEPLOY_DIR"
           fi
           
-          cd /opt/kulobal-health-demo
+          cd "$DEPLOY_DIR"
           echo "Changed to directory: $(pwd)"
           
           # Check if it's a git repository
@@ -85,36 +88,66 @@ jobs:
           # Check if Docker Compose is available
           if ! command -v docker-compose &> /dev/null; then
             echo "Installing Docker Compose..."
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
+            curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            echo "Docker Compose installed successfully"
+          else
+            echo "Docker Compose already available"
           fi
           
-                     # Create .env file from GitHub secrets
-           echo "Creating .env file from GitHub secrets..."
-           echo "# Database" > .env
-           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
-           echo "" >> .env
-           echo "# JWT" >> .env
-           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-           echo "" >> .env
-           echo "# API Configuration" >> .env
-           echo "PORT=5000" >> .env
-           echo "NODE_ENV=production" >> .env
-           echo "" >> .env
-           echo "# Frontend Configuration" >> .env
-           echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
-           echo "Environment variables configured from GitHub secrets"
+          # Create .env file from GitHub secrets
+          echo "Creating .env file from GitHub secrets..."
+          echo "# Database" > .env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+          echo "" >> .env
+          echo "# JWT" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "" >> .env
+          echo "# API Configuration" >> .env
+          echo "PORT=5000" >> .env
+          echo "NODE_ENV=production" >> .env
+          echo "" >> .env
+          echo "# Frontend Configuration" >> .env
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+          echo "Environment variables configured from GitHub secrets"
+          
+          # Set proper permissions for .env file
+          chmod 600 .env
           
           echo "Stopping containers..."
           docker-compose down --remove-orphans || echo "No containers to stop"
+          
           echo "Building containers..."
-          docker-compose build --no-cache
+          if docker-compose build --no-cache; then
+            echo "✅ Containers built successfully"
+          else
+            echo "❌ Container build failed"
+            exit 1
+          fi
+          
           echo "Starting containers..."
-          docker-compose up -d
+          if docker-compose up -d; then
+            echo "✅ Containers started successfully"
+          else
+            echo "❌ Container startup failed"
+            exit 1
+          fi
+          
           echo "Waiting for containers to be ready..."
-          sleep 10
+          sleep 15
+          
           echo "Checking container status..."
           docker-compose ps
+          
+          # Check if all containers are running
+          if docker-compose ps | grep -q "Up"; then
+            echo "✅ All containers are running"
+          else
+            echo "❌ Some containers failed to start"
+            docker-compose logs
+            exit 1
+          fi
+          
           echo "Cleaning up Docker system..."
           docker system prune -f
           echo "✅ Deployment completed successfully!"

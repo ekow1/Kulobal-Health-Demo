@@ -1,9 +1,8 @@
-
+version: '3.9'
 
 services:
   backend:
     image: kulobal-backend:latest
-    container_name: kulobal-backend
     ports:
       - "5000:5000"
     environment:
@@ -21,7 +20,6 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: kulobal-nginx
     ports:
       - "80:80"
       - "443:443"

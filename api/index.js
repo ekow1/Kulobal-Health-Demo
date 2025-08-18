@@ -2,6 +2,9 @@ import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 
+// Import routers
+import authRouter from './routes/auth.js';
+
 const app = new Hono();
 
 // CORS configuration
@@ -40,6 +43,18 @@ app.get('/test', (c) => {
     message: 'Test endpoint working',
     timestamp: new Date().toISOString()
   });
+});
+
+// Mount auth routes
+app.route('/api/auth', authRouter);
+
+// 404 handler
+app.notFound((c) => {
+  return c.json({
+    success: false,
+    message: 'Endpoint not found',
+    path: c.req.path
+  }, 404);
 });
 
 // Start server

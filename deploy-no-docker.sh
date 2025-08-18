@@ -7,14 +7,27 @@ set -e
 
 echo "🚀 Starting deployment without Docker..."
 
-# Update system
-echo "📦 Updating system packages..."
-sudo apt update && sudo apt upgrade -y
+# Ensure sudo can run without password (or run as root)
+echo "🔧 Checking sudo permissions..."
 
-# Install Node.js 18.x
-echo "📦 Installing Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# Update system packages
+echo "📦 Updating system packages..."
+sudo apt update -y
+sudo apt upgrade -y
+
+# Install curl if not present
+echo "📦 Installing curl..."
+sudo apt install -y curl
+
+# Install Node.js v24
+echo "📦 Installing Node.js v24..."
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Verify installation
+echo "🔍 Verifying Node.js installation..."
+node -v
+npm -v
 
 # Install PM2 globally
 echo "📦 Installing PM2..."

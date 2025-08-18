@@ -131,7 +131,7 @@ const port = parseInt(process.env.PORT || '5000');
 const startServer = async () => {
   try {
     // Connect to MongoDB
-    // await connectDB();
+    await connectDB();
     console.log('Skipping database connection for testing');
     
     console.log(`🚀 Server starting on port ${port}...`);

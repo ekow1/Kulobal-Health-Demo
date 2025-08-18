@@ -59,6 +59,11 @@ jobs:
           
           # Navigate to api directory and deploy
           cd api
+          
+          # Stop any existing nginx processes
+          sudo pkill nginx || true
+          sudo systemctl stop nginx || true
+          
           docker stack rm kulobal-stack || true
           docker build -f Dockerfile.backend -t kulobal-backend:latest .
           docker stack deploy -c docker-compose.yml kulobal-stack

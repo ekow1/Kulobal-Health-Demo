@@ -6,7 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
+COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci
 
 # Copy pre-built Next.js files
@@ -20,7 +20,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy package files
-COPY package.json package-lock.json* ./
+COPY frontend/package.json frontend/package-lock.json* ./
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy pre-built Next.js files

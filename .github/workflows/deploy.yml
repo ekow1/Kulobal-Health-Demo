@@ -19,14 +19,24 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
 
-    - name: Install dependencies
-      run: npm ci
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Install backend dependencies
+      run: |
+        cd api
+        npm ci
 
     - name: Build application
       run: |
+        cd frontend
         npm run build
-        npm run build:api
+        cd ../api
+        npm run build
 
     - name: Test SSH Connection
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -81,9 +91,12 @@ jobs:
           
           # Build application on VPS
           echo "Building application on VPS..."
+          cd frontend
           npm ci
           npm run build
-          npm run build:api
+          cd ../api
+          npm ci
+          npm run build
           
           # Check if Docker Compose is available (prioritize new syntax)
           if docker compose version &> /dev/null; then

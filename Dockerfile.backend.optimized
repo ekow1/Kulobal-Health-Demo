@@ -6,7 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
+COPY api/package.json api/package-lock.json* ./
 RUN npm ci
 
 # Production image, copy all the files and run the API
@@ -19,11 +19,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
 # Copy package files
-COPY package.json package-lock.json* ./
+COPY api/package.json api/package-lock.json* ./
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy pre-built API files
-COPY api/dist ./api/dist
+COPY api/dist ./dist
 
 USER nodejs
 
@@ -31,4 +31,4 @@ EXPOSE 5000
 
 ENV PORT 5000
 
-CMD ["npm", "run", "start:api"]
+CMD ["npm", "run", "start"]

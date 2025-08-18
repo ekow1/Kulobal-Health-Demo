@@ -14,8 +14,8 @@
 /coverage
 
 # next.js
-/.next/
-/out/
+frontend/.next/
+frontend/out/
 
 # Allow built files for deployment (these will be force-added)
 # !.next/

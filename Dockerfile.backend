@@ -6,14 +6,14 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
+COPY api/package.json api/package-lock.json* ./
 RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY api/ .
 
 # Debug: Show Node.js version and npm version
 RUN node --version && npm --version
@@ -22,7 +22,7 @@ RUN node --version && npm --version
 RUN ls -la
 
 # Build the API
-RUN npm run build:api
+RUN npm run build
 
 # Production image, copy all the files and run the API
 FROM base AS runner
@@ -34,7 +34,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
 # Copy built API files
-COPY --from=builder --chown=nodejs:nodejs /app/api/dist ./api/dist
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
 
@@ -44,4 +44,4 @@ EXPOSE 5000
 
 ENV PORT 5000
 
-CMD ["npm", "run", "start:api"]
+CMD ["npm", "run", "start"]

@@ -40,8 +40,19 @@ jobs:
         passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
         port: ${{ secrets.VPS_PORT }}
         script: |
-          cd /opt/kulobal-health-demo/api
-          git pull origin main
+          # Create directory if it doesn't exist
+          mkdir -p /opt/kulobal-health-demo
+          cd /opt/kulobal-health-demo
+          
+          # Clone or pull the repository
+          if [ -d ".git" ]; then
+            git pull origin main
+          else
+            git clone https://github.com/${{ github.repository }}.git .
+          fi
+          
+          # Navigate to api directory and deploy
+          cd api
           docker stack rm kulobal-stack || true
           docker build -t kulobal-backend:latest .
           docker stack deploy -c docker-compose.yml kulobal-stack

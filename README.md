@@ -1,74 +1,102 @@
-# KHS Pharma Store
+# Kulobal Health - Monorepo
 
-A modern pharmaceutical e-commerce platform built with Next.js, focusing on improving access to medicines in Africa.
-
-## Features
-
-- 🏪 Digital stock management
-- 💳 Secure payment integration with Selcom Pay
-- 📱 Mobile-first responsive design
-- 🚚 Delivery tracking system
-- 📊 Data-driven inventory management
-- 🔒 Counterfeit medicine prevention
-
-## Tech Stack
-
-- **Framework:** Next.js 14
-- **Styling:** Tailwind CSS
-- **Icons:** Custom SVG components
-- **UI Components:** Shadcn/ui
-- **Images:** Next.js Image Optimization
-- **Deployment:** Vercel
-
-## Getting Started
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/khspharmastore.git
-cd khspharmastore
-```
-
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
-
-3. Run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-4. Open [http://localhost:3000](http://localhost:3000) with your browser.
+This is a monorepo containing the Kulobal Health platform with separate frontend and backend applications.
 
 ## Project Structure
 
 ```
-src/
-├── components/        # React components
-├── app/              # App router pages
-├── lib/              # Utility functions
-└── styles/           # Global styles
-public/
-├── brands/           # Partner logos
-└── images/           # Static images
+Kulobal-Health/
+├── frontend/          # Next.js Frontend Application
+│   ├── src/           # Source code
+│   ├── public/        # Static assets
+│   ├── package.json   # Frontend dependencies
+│   └── ...
+├── api/              # Hono Backend API
+│   ├── routes/       # API routes
+│   ├── models/       # Database models
+│   ├── middleware/   # Middleware
+│   ├── package.json  # Backend dependencies
+│   ├── docker-compose.yml  # Backend deployment
+│   ├── nginx.conf    # Nginx configuration
+│   └── ...
+└── README.md         # This file
 ```
 
-## Contributing
+## Frontend (Next.js)
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+The frontend is a Next.js application located in the `frontend/` directory.
+
+### Development
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Build
+
+```bash
+cd frontend
+npm run build
+```
+
+## Backend API (Hono)
+
+The backend is a Hono API located in the `api/` directory.
+
+### Development
+
+```bash
+cd api
+npm install
+npm run dev
+```
+
+### Build
+
+```bash
+cd api
+npm run build
+```
+
+## Deployment
+
+The backend API includes complete Docker and GitHub Actions setup for deployment to a VPS.
+
+### Backend Deployment
+
+```bash
+cd api
+# Follow instructions in api/DEPLOYMENT.md
+```
+
+### Frontend Deployment
+
+The frontend can be deployed to any platform that supports Next.js (Vercel, Netlify, etc.).
+
+## Environment Variables
+
+### Frontend (.env.local)
+```env
+NEXT_PUBLIC_API_URL=https://server.ekowlabs.space
+```
+
+### Backend (.env)
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/kulobal-health
+JWT_SECRET=your-super-secret-jwt-key
+CORS_ORIGIN=https://demo.ekowlabs.space
+PORT=5000
+NODE_ENV=production
+```
+
+## Technologies
+
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
+- **Backend**: Hono, TypeScript, MongoDB, JWT
+- **Deployment**: Docker, Docker Compose, Nginx, GitHub Actions
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact
-
-Project Link: [https://github.com/yourusername/khspharmastore](https://github.com/yourusername/khspharmastore)
+MIT

@@ -58,17 +58,63 @@ jobs:
         timeout: 60s
         command_timeout: 15m
         script: |
-          echo "Starting deployment..."
-          cd /opt/kulobal-health-demo
+          echo "🚀 Starting deployment..."
+          echo "Current user: $(whoami)"
           echo "Current directory: $(pwd)"
-          echo "Pulling latest changes..."
-          git pull origin main
+          
+          # Check if deployment directory exists
+          if [ ! -d "/opt/kulobal-health-demo" ]; then
+            echo "Creating deployment directory..."
+            sudo mkdir -p /opt/kulobal-health-demo
+            sudo chown $USER:$USER /opt/kulobal-health-demo
+          fi
+          
+          cd /opt/kulobal-health-demo
+          echo "Changed to directory: $(pwd)"
+          
+          # Check if it's a git repository
+          if [ ! -d ".git" ]; then
+            echo "Cloning repository..."
+            git clone https://github.com/${{ github.repository }}.git .
+          else
+            echo "Pulling latest changes..."
+            git fetch origin
+            git reset --hard origin/main
+          fi
+          
+          # Check if Docker Compose is available
+          if ! command -v docker-compose &> /dev/null; then
+            echo "Installing Docker Compose..."
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
+          
+                     # Create .env file from GitHub secrets
+           echo "Creating .env file from GitHub secrets..."
+           echo "# Database" > .env
+           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+           echo "" >> .env
+           echo "# JWT" >> .env
+           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+           echo "" >> .env
+           echo "# API Configuration" >> .env
+           echo "PORT=5000" >> .env
+           echo "NODE_ENV=production" >> .env
+           echo "" >> .env
+           echo "# Frontend Configuration" >> .env
+           echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+           echo "Environment variables configured from GitHub secrets"
+          
           echo "Stopping containers..."
-          docker-compose down
+          docker-compose down --remove-orphans || echo "No containers to stop"
           echo "Building containers..."
           docker-compose build --no-cache
           echo "Starting containers..."
           docker-compose up -d
+          echo "Waiting for containers to be ready..."
+          sleep 10
+          echo "Checking container status..."
+          docker-compose ps
           echo "Cleaning up Docker system..."
           docker system prune -f
-          echo "Deployment completed successfully!"
+          echo "✅ Deployment completed successfully!"

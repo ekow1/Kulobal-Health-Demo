@@ -2,7 +2,54 @@
 
 This is a monorepo containing the Kulobal Health platform with separate frontend and backend applications.
 
-## Project Structure
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Docker & Docker Compose
+- MongoDB database
+
+### Local Development
+
+1. **Install dependencies:**
+   ```bash
+   npm run install
+   ```
+
+2. **Set up environment variables:**
+   ```bash
+   cp env.example .env
+   # Edit .env with your configuration
+   ```
+
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+### Docker Deployment
+
+1. **Build and run with Docker Compose:**
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **View logs:**
+   ```bash
+   docker-compose logs -f
+   ```
+
+3. **Stop services:**
+   ```bash
+   docker-compose down
+   ```
+
+## 📁 Project Structure
 
 ```
 Kulobal-Health/
@@ -15,10 +62,15 @@ Kulobal-Health/
 │   ├── routes/       # API routes
 │   ├── models/       # Database models
 │   ├── middleware/   # Middleware
+│   ├── config/       # Database and configuration
 │   ├── package.json  # Backend dependencies
 │   ├── docker-compose.yml  # Backend deployment
 │   ├── nginx.conf    # Nginx configuration
 │   └── ...
+├── docker-compose.yml  # Docker services configuration
+├── Dockerfile.backend  # Backend Docker image
+├── nginx.conf         # Nginx reverse proxy configuration
+├── ssl/               # SSL certificates directory
 └── README.md         # This file
 ```
 
@@ -84,12 +136,45 @@ NEXT_PUBLIC_API_URL=https://server.ekowlabs.space
 
 ### Backend (.env)
 ```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/kulobal-health
-JWT_SECRET=your-super-secret-jwt-key
-CORS_ORIGIN=https://demo.ekowlabs.space
+# Database
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/kulobal-health?retryWrites=true&w=majority
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# API Configuration
 PORT=5000
 NODE_ENV=production
+CORS_ORIGIN=https://demo.ekowlabs.space
 ```
+
+### SSL Certificates
+
+Place your SSL certificates in the `ssl/` directory:
+- `ssl/cert.pem` - SSL certificate
+- `ssl/key.pem` - Private key
+
+## 🌐 API Endpoints
+
+- `GET /health` - Health check
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+- `GET /api/products` - Get products
+- `POST /api/orders` - Create order
+- `GET /api/orders` - Get orders
+
+## 🚀 Deployment
+
+The project uses GitHub Actions for automated deployment to VPS.
+
+### Required GitHub Secrets:
+- `VPS_HOST` - VPS IP address
+- `VPS_USERNAME` - SSH username
+- `VPS_SSH_KEY` - SSH private key
+- `VPS_SSH_PASSPHRASE` - SSH key passphrase
+- `VPS_PORT` - SSH port (usually 22)
+- `MONGODB_URI` - MongoDB connection string
+- `JWT_SECRET` - JWT secret key
 
 ## Technologies
 
@@ -97,6 +182,6 @@ NODE_ENV=production
 - **Backend**: Hono, TypeScript, MongoDB, JWT
 - **Deployment**: Docker, Docker Compose, Nginx, GitHub Actions
 
-## License
+## 📝 License
 
-MIT
+This project is proprietary software.

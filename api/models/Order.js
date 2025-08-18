@@ -1,62 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IOrderItem {
-  productId: string;
-  name: string;
-  quantity: number;
-  price: number;
-  category?: string;
-  image?: string;
-}
-
-export interface IShippingDetails {
-  pharmacyName: string;
-  phoneNumber: string;
-  pharmacyEmail: string;
-  pharmacyLocation: string;
-  streetAddress?: string;
-  gpsAddress?: string;
-}
-
-export interface IPaymentDetails {
-  paymentType: 'full-payment' | 'partial-payment' | 'deposit' | 'credit' | 'installment-payment';
-  paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money' | 'cash-on-delivery' | 'pay-online';
-  amount: number;
-  currency: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  transactionId?: string;
-}
-
-export interface IOrderTracking {
-  status: string;
-  date: Date;
-  description?: string;
-  location?: string;
-}
-
-export interface IOrder extends Document {
-  userId: mongoose.Types.ObjectId;
-  orderNumber: string;
-  items: IOrderItem[];
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
-  subtotal: number;
-  deliveryFee: number;
-  tax: number;
-  total: number;
-  currency: string;
-  shippingDetails: IShippingDetails;
-  paymentDetails: IPaymentDetails;
-  tracking: IOrderTracking[];
-  notes?: string;
-  estimatedDelivery?: Date;
-  deliveredAt?: Date;
-  cancelledAt?: Date;
-  cancelledReason?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const orderItemSchema = new Schema<IOrderItem>({
+const orderItemSchema = new Schema({
   productId: {
     type: String,
   },
@@ -82,7 +26,7 @@ const orderItemSchema = new Schema<IOrderItem>({
   }
 });
 
-const shippingDetailsSchema = new Schema<IShippingDetails>({
+const shippingDetailsSchema = new Schema({
   pharmacyName: {
     type: String,
     required: true
@@ -107,7 +51,7 @@ const shippingDetailsSchema = new Schema<IShippingDetails>({
   }
 });
 
-const paymentDetailsSchema = new Schema<IPaymentDetails>({
+const paymentDetailsSchema = new Schema({
   paymentType: {
     type: String,
     enum: ['full-payment', 'partial-payment', 'deposit', 'credit', 'installment-payment'],
@@ -137,7 +81,7 @@ const paymentDetailsSchema = new Schema<IPaymentDetails>({
   }
 });
 
-const orderTrackingSchema = new Schema<IOrderTracking>({
+const orderTrackingSchema = new Schema({
   status: {
     type: String,
     required: true
@@ -154,7 +98,7 @@ const orderTrackingSchema = new Schema<IOrderTracking>({
   }
 });
 
-const orderSchema = new Schema<IOrder>({
+const orderSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -248,5 +192,5 @@ orderSchema.pre('save', function(next) {
   next();
 });
 
-export const Order = mongoose.model<IOrder>('Order', orderSchema);
+export const Order = mongoose.model('Order', orderSchema);
 

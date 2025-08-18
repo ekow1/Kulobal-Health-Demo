@@ -5,7 +5,7 @@ dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/kulobal_health';
 
-export const connectDB = async (): Promise<void> => {
+export const connectDB = async () => {
   try {
     const conn = await mongoose.connect(MONGODB_URI);
     
@@ -33,7 +33,7 @@ export const connectDB = async (): Promise<void> => {
   }
 };
 
-export const disconnectDB = async (): Promise<void> => {
+export const disconnectDB = async () => {
   try {
     await mongoose.connection.close();
     console.log('MongoDB disconnected');

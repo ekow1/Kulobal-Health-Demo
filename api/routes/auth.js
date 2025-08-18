@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
-import { auth, requireRole } from '../middleware/auth';
+import { User } from '../models/User.js';
+import { auth, requireRole } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const authRouter = new Hono();
@@ -29,14 +29,14 @@ const loginSchema = z.object({
 });
 
 // Generate JWT token
-const generateToken = (userId: string, email: string, role: string): string => {
+const generateToken = (userId, email, role) => {
   const secret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
   
   return jwt.sign(
     { userId, email, role },
     secret,
-    { expiresIn: expiresIn as any }
+    { expiresIn }
   );
 };
 
@@ -60,7 +60,7 @@ authRouter.post('/register', async (c) => {
     await user.save();
     
     // Generate token
-    const token = generateToken((user._id as any).toString(), user.email, user.role);
+    const token = generateToken(String(user._id), user.email, user.role);
     
     // Update last login
     user.lastLogin = new Date();
@@ -132,14 +132,14 @@ authRouter.post('/login', async (c) => {
     }
     
     // Generate token
-    const token = generateToken((user._id as any).toString(), user.email, user.role);
+    const token = generateToken(String(user._id), user.email, user.role);
     
     // Update last login
     user.lastLogin = new Date();
     await user.save();
     
     // Set HTTP-only cookie with userId
-    c.header('Set-Cookie', `userId=${(user._id as any).toString()}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`);
+    c.header('Set-Cookie', `userId=${(user._id ).toString()}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`);
     
     return c.json({
       success: true,
@@ -205,7 +205,7 @@ authRouter.put('/profile', auth, async (c) => {
       'streetAddress', 'gpsAddress'
     ];
     
-    const updateData: any = {};
+    const updateData = {};
     allowedFields.forEach(field => {
       if (body[field] !== undefined) {
         updateData[field] = body[field];
@@ -290,7 +290,7 @@ authRouter.get('/users', auth, requireRole(['admin']), async (c) => {
     const role = c.req.query('role');
     const search = c.req.query('search');
     
-    const query: any = {};
+    const query = {};
     
     if (role) {
       query.role = role;

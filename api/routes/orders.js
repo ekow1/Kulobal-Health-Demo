@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { Order } from '../models/Order';
-import { Payment } from '../models/Payment';
-import { auth, requireRole } from '../middleware/auth';
+import { Order } from '../models/Order.js';
+import { Payment } from '../models/Payment.js';
+import { auth, requireRole } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const orderRouter = new Hono();
@@ -70,7 +70,7 @@ orderRouter.post('/', auth, async (c) => {
       shippingDetails: validatedData.shippingDetails,
       paymentDetails: {
         ...validatedData.paymentDetails,
-        status: 'pending' as const,
+        status: 'pending',
       },
       notes: validatedData.notes,
       ...(validatedData.estimatedDelivery && {
@@ -133,7 +133,7 @@ orderRouter.get('/', auth, requireRole(['admin']), async (c) => {
     const startDate = c.req.query('startDate');
     const endDate = c.req.query('endDate');
     
-    const query: any = {};
+    const query = {};
     
     if (status) {
       query.status = status;
@@ -193,7 +193,7 @@ orderRouter.get('/my-orders', auth, async (c) => {
     const limit = parseInt(c.req.query('limit') || '10');
     const status = c.req.query('status');
     
-    const query: any = { userId: user._id };
+    const query = { userId: user._id };
     
     if (status) {
       query.status = status;
@@ -275,7 +275,7 @@ orderRouter.patch('/:id/status', auth, requireRole(['admin']), async (c) => {
     const body = await c.req.json();
     const validatedData = updateOrderStatusSchema.parse(body);
     
-    const updateData: any = {
+    const updateData = {
       status: validatedData.status,
       updatedAt: new Date()
     };
@@ -439,11 +439,11 @@ orderRouter.get('/stats/overview', auth, requireRole(['admin']), async (c) => {
       byStatus: ordersByStatus.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       byPaymentMethod: ordersByPaymentMethod.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       recentOrders
     };
     

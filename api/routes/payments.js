@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { Payment } from '../models/Payment';
-import { Order } from '../models/Order';
-import { auth, requireRole } from '../middleware/auth';
+import { Payment } from '../models/Payment.js';
+import { Order } from '../models/Order.js';
+import { auth, requireRole } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const paymentRouter = new Hono();
@@ -70,7 +70,7 @@ const updatePaymentStatusSchema = z.object({
 });
 
 // Generate transaction ID
-const generateTransactionId = (): string => {
+const generateTransactionId = () => {
   const timestamp = Date.now().toString(36);
   const randomStr = Math.random().toString(36).substring(2, 8);
   return `TXN_${timestamp}_${randomStr.toUpperCase()}`;
@@ -94,7 +94,7 @@ paymentRouter.post('/', auth, async (c) => {
       currency: validatedData.currency,
       paymentType: validatedData.paymentType,
       paymentMethod: validatedData.paymentMethod,
-      status: 'completed' as const, // Set status to completed immediately
+      status: 'completed', // Set status to completed immediately
       description: validatedData.description,
       metadata: validatedData.metadata || {},
     };
@@ -136,7 +136,7 @@ paymentRouter.post('/', auth, async (c) => {
           amount: validatedData.amount,
           currency: validatedData.currency,
           transactionId: transactionId,
-          status: 'completed' as const,
+          status: 'completed',
         },
         notes: validatedData.metadata.notes,
         tracking: [{
@@ -199,7 +199,7 @@ paymentRouter.get('/', auth, requireRole(['admin']), async (c) => {
     const paymentType = c.req.query('paymentType');
     const userId = c.req.query('userId');
     
-    const query: any = {};
+    const query = {};
     
     if (status) {
       query.status = status;
@@ -253,7 +253,7 @@ paymentRouter.get('/my-payments', auth, async (c) => {
     const limit = parseInt(c.req.query('limit') || '10');
     const status = c.req.query('status');
     
-    const query: any = { userId: user._id };
+    const query = { userId: user._id };
     
     if (status) {
       query.status = status;
@@ -414,11 +414,11 @@ paymentRouter.get('/stats/overview', auth, requireRole(['admin']), async (c) => 
       byType: paymentsByType.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       byStatus: paymentsByStatus.reduce((acc, item) => {
         acc[item._id] = item.count;
         return acc;
-      }, {} as Record<string, number>),
+      }, {}),
       recentPayments
     };
     

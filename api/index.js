@@ -26,6 +26,8 @@ app.use('*', secureHeaders());
 app.use('*', compress());
 // Cookie parsing is built into Hono, no need for separate middleware
 
+const db = await connectDB();
+
 // CORS configuration
 const corsOrigins = process.env.CORS_ORIGIN 
   ? [process.env.CORS_ORIGIN]
@@ -53,7 +55,7 @@ app.get('/', (c) => {
   return c.json({
     success: true,
     message: 'Kulobal Health API',
-    mongo: process.env.MONGODB_URI,
+    mongo: db,
     version: '1.0.0',
     endpoints: {
       health: '/health',

@@ -85,13 +85,13 @@ jobs:
             git reset --hard origin/main
           fi
           
-          # Check if Docker Compose is available (try both old and new syntax)
-          if command -v docker-compose &> /dev/null; then
-            echo "Docker Compose (legacy) available"
-            DOCKER_COMPOSE_CMD="docker-compose"
-          elif docker compose version &> /dev/null; then
+          # Check if Docker Compose is available (prioritize new syntax)
+          if docker compose version &> /dev/null; then
             echo "Docker Compose (new) available"
             DOCKER_COMPOSE_CMD="docker compose"
+          elif command -v docker-compose &> /dev/null; then
+            echo "Docker Compose (legacy) available"
+            DOCKER_COMPOSE_CMD="docker-compose"
           else
             echo "Installing Docker Compose..."
             curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose

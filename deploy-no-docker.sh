@@ -65,6 +65,14 @@ EOF
 
 # Setup nginx configuration
 echo "🔧 Setting up nginx configuration..."
+
+# Remove default nginx sites
+echo "🧹 Removing default nginx sites..."
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo rm -f /etc/nginx/sites-available/default
+
+# Create our custom nginx site
+echo "📝 Creating custom nginx site..."
 sudo tee /etc/nginx/sites-available/kulobal-api << EOF
 # Rate limiting
 limit_req_zone \$binary_remote_addr zone=api:10m rate=10r/s;
@@ -152,7 +160,6 @@ EOF
 # Enable the site
 echo "🔧 Enabling nginx site..."
 sudo ln -sf /etc/nginx/sites-available/kulobal-api /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
 
 # Test nginx configuration
 echo "🔧 Testing nginx configuration..."

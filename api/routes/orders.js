@@ -70,7 +70,7 @@ orderRouter.post('/', auth, async (c) => {
       shippingDetails: validatedData.shippingDetails,
       paymentDetails: {
         ...validatedData.paymentDetails,
-        status: 'pending' as const,
+        status: 'pending',
       },
       notes: validatedData.notes,
       ...(validatedData.estimatedDelivery && {

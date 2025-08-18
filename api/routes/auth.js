@@ -60,7 +60,7 @@ authRouter.post('/register', async (c) => {
     await user.save();
     
     // Generate token
-    const token = generateToken((user._id as any).toString(), user.email, user.role);
+    const token = generateToken(String(user._id), user.email, user.role);
     
     // Update last login
     user.lastLogin = new Date();
@@ -82,7 +82,7 @@ authRouter.post('/register', async (c) => {
       }
     }, 201);
     
-  } catch (error: unknown) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return c.json({
         success: false,
@@ -132,7 +132,7 @@ authRouter.post('/login', async (c) => {
     }
     
     // Generate token
-    const token = generateToken((user._id as any).toString(), user.email, user.role);
+    const token = generateToken(String(user._id), user.email, user.role);
     
     // Update last login
     user.lastLogin = new Date();
@@ -156,7 +156,7 @@ authRouter.post('/login', async (c) => {
       }
     });
     
-  } catch (error: unknown) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return c.json({
         success: false,

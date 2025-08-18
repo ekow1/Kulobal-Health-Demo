@@ -48,6 +48,11 @@ const port = parseInt(process.env.PORT || '5000');
 const startServer = async () => {
   try {
     console.log(`🚀 Server starting on port ${port}...`);
+    console.log('Environment check:', {
+      NODE_ENV: process.env.NODE_ENV,
+      PORT: process.env.PORT,
+      CORS_ORIGIN: process.env.CORS_ORIGIN
+    });
     
     // Start the server
     const server = serve({
@@ -56,9 +61,24 @@ const startServer = async () => {
     });
     
     console.log(`✅ Server running on http://localhost:${port}`);
+    console.log('Server object:', server);
+    
+    // Keep the process alive
+    setInterval(() => {
+      console.log('Server heartbeat - still running');
+    }, 30000); // Log every 30 seconds
+    
+    process.on('uncaughtException', (err) => {
+      console.error('Uncaught Exception:', err);
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
     
   } catch (error) {
     console.error('❌ Failed to start server:', error);
+    console.error('Error stack:', error.stack);
     process.exit(1);
   }
 };

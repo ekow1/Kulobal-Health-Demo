@@ -53,12 +53,17 @@ EOF
 # Setup nginx configuration
 echo "🔧 Setting up nginx configuration..."
 sudo tee /etc/nginx/sites-available/kulobal-api << EOF
+# Rate limiting
+limit_req_zone \$binary_remote_addr zone=api:10m rate=10r/s;
+
+# HTTP to HTTPS redirect
 server {
     listen 80;
     server_name server.ekowlabs.space;
     return 301 https://\$server_name\$request_uri;
 }
 
+# HTTPS server
 server {
     listen 443 ssl http2;
     server_name server.ekowlabs.space;
@@ -92,16 +97,19 @@ server {
     }
 
     # Health endpoint
-    location /health {
+    location = /health {
         proxy_pass http://localhost:5000/health;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        access_log off;
     }
 
     # API routes
     location /api/ {
+        limit_req zone=api burst=20 nodelay;
+        
         proxy_pass http://localhost:5000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -115,11 +123,15 @@ server {
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
+
+        access_log /var/log/nginx/api_access.log;
+        error_log /var/log/nginx/api_error.log warn;
     }
 
     # Default root
     location / {
         return 200 "Kulobal Health API running. Use /api/* or /health.\n";
+        add_header Content-Type text/plain;
     }
 }
 EOF

@@ -78,6 +78,15 @@ app.route('/api/auth', authRouter);
 app.route('/api/payments', paymentRouter);
 app.route('/api/orders', orderRouter);
 
+// Debug: Add auth routes directly
+app.get('/api/auth/debug', (c) => {
+  return c.json({
+    success: true,
+    message: 'Direct auth route working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // 404 handler
 app.notFound((c) => {
   return c.json({

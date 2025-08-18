@@ -18,7 +18,7 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
         script: |
-          echo "🚀 Starting deployment without Docker..."
+          echo "🚀 Starting application deployment..."
           
           # Set environment variables
           export MONGODB_URI="${{ secrets.MONGODB_URI }}"
@@ -26,12 +26,12 @@ jobs:
           
           # Download deployment script
           echo "📥 Downloading deployment script..."
-          wget -O deploy-no-docker.sh https://raw.githubusercontent.com/ekow1/Kulobal-Health-Demo/main/deploy-no-docker.sh
-          chmod +x deploy-no-docker.sh
+          wget -O deploy-app.sh https://raw.githubusercontent.com/ekow1/Kulobal-Health-Demo/main/deploy-app.sh
+          chmod +x deploy-app.sh
           
           # Run deployment
           echo "🚀 Running deployment..."
-          ./deploy-no-docker.sh
+          ./deploy-app.sh
           
           # Show final status
           echo "📊 Final application status:"

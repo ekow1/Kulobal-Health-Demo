@@ -48,6 +48,22 @@ app.get('/health', (c) => {
   });
 });
 
+// Root endpoint - API info
+app.get('/', (c) => {
+  return c.json({
+    success: true,
+    message: 'Kulobal Health API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      payments: '/api/payments',
+      orders: '/api/orders'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.route('/api/auth', authRouter);
 app.route('/api/payments', paymentRouter);

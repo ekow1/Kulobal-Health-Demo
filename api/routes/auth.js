@@ -6,6 +6,15 @@ import { z } from 'zod';
 
 const authRouter = new Hono();
 
+// Test endpoint - no authentication required
+authRouter.get('/test', async (c) => {
+  return c.json({
+    success: true,
+    message: 'Auth router is working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Validation schemas
 const registerSchema = z.object({
   businessName: z.string().min(2).max(100),

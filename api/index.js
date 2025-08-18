@@ -29,7 +29,7 @@ app.use('*', compress());
 // CORS configuration
 const corsOrigins = process.env.CORS_ORIGIN 
   ? [process.env.CORS_ORIGIN]
-  : ['http://localhost:3000', 'https://demo.ekowlabs.space'];
+  : ['http://localhost:3000', 'https://demo.ekowlabs.space','https://frontend.ekowlabs.space'];
 
 app.use('*', cors({
   origin: corsOrigins,

@@ -35,7 +35,10 @@ jobs:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
+        passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
         port: ${{ secrets.VPS_PORT }}
+        timeout: 60s
+        command_timeout: 10m
         script: |
           cd /opt/kulobal-health-demo
           git pull origin main

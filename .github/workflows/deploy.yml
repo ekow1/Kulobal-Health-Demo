@@ -26,10 +26,10 @@ jobs:
         cd api
         npm ci
 
-    - name: Build backend
+    - name: Setup backend
       run: |
         cd api
-        npm run build
+        echo "JavaScript backend - no build required"
 
     - name: Test SSH Connection
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -82,11 +82,10 @@ jobs:
           echo "Cloning repository..."
           git clone https://github.com/${{ github.repository }}.git .
           
-          # Build backend on VPS
-          echo "Building backend on VPS..."
+          # Setup backend on VPS
+          echo "Setting up backend on VPS..."
           cd api
           npm ci
-          npm run build
           
           # Check if Docker Compose is available (prioritize new syntax)
           if docker compose version &> /dev/null; then

@@ -82,7 +82,7 @@ authRouter.post('/register', async (c) => {
       }
     }, 201);
     
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return c.json({
         success: false,
@@ -156,7 +156,7 @@ authRouter.post('/login', async (c) => {
       }
     });
     
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return c.json({
         success: false,

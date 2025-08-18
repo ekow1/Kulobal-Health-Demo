@@ -17,9 +17,7 @@
 frontend/.next/
 frontend/out/
 
-# Backend build outputs
-api/dist/
-dist/
+# Backend build outputs (not needed for JavaScript)
 
 # production
 /build

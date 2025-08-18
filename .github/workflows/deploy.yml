@@ -37,5 +37,8 @@ jobs:
           echo "📊 Final application status:"
           pm2 status
           
+          echo "📊 Final nginx status:"
+          sudo systemctl status nginx --no-pager
+          
           echo "✅ Deployment completed successfully!"
           echo "🌐 API is available at: https://server.ekowlabs.space"

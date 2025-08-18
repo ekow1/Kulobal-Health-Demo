@@ -133,6 +133,11 @@ sudo rm -f /etc/nginx/sites-enabled/default
 echo "🔧 Testing nginx configuration..."
 sudo nginx -t
 
+# Stop any existing nginx processes
+echo "🔄 Stopping existing nginx processes..."
+sudo systemctl stop nginx || true
+sudo pkill nginx || true
+
 # Start the application with PM2
 echo "🚀 Starting application with PM2..."
 pm2 delete kulobal-api 2>/dev/null || true
@@ -140,10 +145,14 @@ pm2 start index.js --name kulobal-api --env production
 pm2 save
 pm2 startup
 
-# Restart nginx
-echo "🔄 Restarting nginx..."
-sudo systemctl restart nginx
+# Start and enable nginx
+echo "🔄 Starting and enabling nginx..."
+sudo systemctl start nginx
 sudo systemctl enable nginx
+
+# Verify nginx is running
+echo "🔍 Verifying nginx status..."
+sudo systemctl status nginx --no-pager
 
 # Show status
 echo "📊 Application status:"
@@ -155,3 +164,4 @@ echo "✅ Deployment completed successfully!"
 echo "🌐 API is available at: https://server.ekowlabs.space"
 echo "📊 PM2 logs: pm2 logs kulobal-api"
 echo "🔄 Restart app: pm2 restart kulobal-api"
+echo "🔄 Restart nginx: sudo systemctl restart nginx"

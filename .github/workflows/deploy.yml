@@ -40,12 +40,12 @@ jobs:
         passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
         port: ${{ secrets.VPS_PORT }}
         script: |
-          # Create directory in user's home directory
+          # Remove existing directory completely and create fresh
+          rm -rf ~/kulobal-health-demo
           mkdir -p ~/kulobal-health-demo
           cd ~/kulobal-health-demo
           
-          # Remove existing directory if it exists and clone fresh
-          rm -rf .git
+          # Clone the repository
           git clone https://github.com/${{ github.repository }}.git .
           
           # Navigate to api directory and deploy

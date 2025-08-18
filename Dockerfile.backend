@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -14,6 +14,12 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Debug: Show Node.js version and npm version
+RUN node --version && npm --version
+
+# Debug: Show what's in the current directory
+RUN ls -la
 
 # Build the API
 RUN npm run build:api

@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle, Clock, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Sidebar from "../sidebar";
 import { useOrdersStore } from "@/store/orders-store";
+import { useAuthStore } from "@/store/auth-store";
 import { useState, useEffect } from "react";
 
 const getStatusClasses = (status: string) => {
@@ -23,11 +24,23 @@ const getStatusClasses = (status: string) => {
 
 export default function OrderHistory() {
   const { orders, fetchOrders, isLoading } = useOrdersStore();
+  const { isAuthenticated, user } = useAuthStore();
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    console.log('Orders page mounted, fetching orders...');
+    console.log('User authenticated:', isAuthenticated);
+    console.log('Current user:', user);
+    
+    if (isAuthenticated && user) {
+      fetchOrders();
+    } else {
+      console.log('User not authenticated, cannot fetch orders');
+    }
+  }, [fetchOrders, isAuthenticated, user]);
+
+  console.log('Current orders state:', orders);
+  console.log('Filtered orders:', filteredOrders);
 
   const filterOptions = [
     { label: "All Orders", value: "all" },
@@ -74,7 +87,11 @@ export default function OrderHistory() {
         </div>
 
         <div className="space-y-4">
-          {isLoading ? (
+          {!isAuthenticated ? (
+            <div className="text-center py-8 text-gray-500">
+              Please log in to view your orders.
+            </div>
+          ) : isLoading ? (
             <div className="text-center py-8 text-gray-500">
               Loading orders...
             </div>
@@ -140,7 +157,7 @@ export default function OrderHistory() {
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
-              No orders found
+              {isAuthenticated ? "No orders found" : "Please log in to view your orders"}
             </div>
           )}
         </div>

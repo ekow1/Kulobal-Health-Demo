@@ -18,7 +18,9 @@ export default function OrderDetails() {
   useEffect(() => {
     const loadOrder = async () => {
       if (params.id) {
+        console.log('Loading order with ID:', params.id);
         const orderData = await fetchOrderById(params.id as string);
+        console.log('Loaded order data:', orderData);
         setOrder(orderData);
         setLoading(false);
       }

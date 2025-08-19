@@ -6,6 +6,44 @@ import { z } from 'zod';
 
 const orderRouter = new Hono();
 
+// Test endpoint to check if orders route is working
+orderRouter.get('/test', (c) => {
+  return c.json({
+    success: true,
+    message: 'Orders route is working',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Debug endpoint to check orders in database (no auth required)
+orderRouter.get('/debug', async (c) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(5);
+    
+    return c.json({
+      success: true,
+      message: 'Orders debug info',
+      totalOrders,
+      recentOrders: recentOrders.map(order => ({
+        id: order._id,
+        orderNumber: order.orderNumber,
+        userId: order.userId,
+        status: order.status,
+        total: order.total,
+        createdAt: order.createdAt
+      }))
+    });
+  } catch (error) {
+    console.error('Debug endpoint error:', error);
+    return c.json({
+      success: false,
+      message: 'Error fetching debug info',
+      error: error.message
+    }, 500);
+  }
+});
+
 // Validation schemas
 const createOrderSchema = z.object({
   items: z.array(z.object({
@@ -208,11 +246,14 @@ orderRouter.get('/', auth, requireRole(['admin']), async (c) => {
 orderRouter.get('/my-orders', auth, async (c) => {
   try {
     const user = c.get('user');
+    console.log('Fetching orders for user:', user._id);
+    
     const page = parseInt(c.req.query('page') || '1');
     const limit = parseInt(c.req.query('limit') || '10');
     const status = c.req.query('status');
     
     const query = { userId: user._id };
+    console.log('Query for orders:', query);
     
     if (status) {
       query.status = status;
@@ -225,9 +266,11 @@ orderRouter.get('/my-orders', auth, async (c) => {
       .skip(skip)
       .limit(limit);
     
+    console.log('Found orders:', orders.length);
+    
     const total = await Order.countDocuments(query);
     
-    return c.json({
+    const response = {
       success: true,
       data: {
         orders,
@@ -238,7 +281,10 @@ orderRouter.get('/my-orders', auth, async (c) => {
           pages: Math.ceil(total / limit)
         }
       }
-    });
+    };
+    
+    console.log('Sending response:', response);
+    return c.json(response);
     
   } catch (error) {
     console.error('Get user orders error:', error);

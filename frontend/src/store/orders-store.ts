@@ -118,15 +118,19 @@ export const useOrdersStore = create<OrdersStore>()(
           if (params?.status) queryParams.append('status', params.status)
 
           const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/orders/my-orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+          console.log('Fetching orders from:', url)
           const response = await axios.get(url, { withCredentials: true })
+          console.log('Orders API response:', response.data)
           
           if (!response.data.success) {
             throw new Error(response.data.message || "Failed to fetch orders")
           }
           
           const orders = response.data.data?.orders || []
+          console.log('Fetched orders:', orders)
           set({ orders, isLoading: false })
         } catch (error: any) {
+          console.error('Error fetching orders:', error)
           const errorMessage = error.response?.data?.message || error.message || "Failed to fetch orders"
           set({ error: errorMessage, isLoading: false })
     }

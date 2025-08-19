@@ -4,9 +4,14 @@ import { User } from '../models/User.js';
 export const auth = async (c, next) => {
   try {
     // Get userId from cookie
-    const userId = c.req.header('Cookie')?.split('userId=')[1]?.split(';')[0];
+    const cookieHeader = c.req.header('Cookie');
+    console.log('Cookie header:', cookieHeader);
+    
+    const userId = cookieHeader?.split('userId=')[1]?.split(';')[0];
+    console.log('Extracted userId:', userId);
     
     if (!userId) {
+      console.log('No userId found in cookie');
       return c.json({ 
         success: false, 
         message: 'User not authenticated.' 
@@ -15,8 +20,10 @@ export const auth = async (c, next) => {
     
     // Get user from database
     const user = await User.findById(userId).select('-password');
+    console.log('Found user:', user ? user._id : 'null');
     
     if (!user) {
+      console.log('User not found in database');
       return c.json({ 
         success: false, 
         message: 'User not found.' 

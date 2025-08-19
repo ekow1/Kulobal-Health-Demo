@@ -3,12 +3,15 @@ import Image from "next/image"
 import type React from "react"
 import img from "@/assets/images/groupImg.png"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import BusinessRegistrationForm from "@/components/auth/business-registration-form"
 import SignupSkeleton from "@/components/auth/signup-skeleton"
 import { useAuthStore } from "@/store/auth-store"
+import { toast } from "react-hot-toast"
 
 export default function BusinessRegistration() {
   const { isLoading } = useAuthStore()
+  const router = useRouter()
  
   // Show skeleton while loading
   if (isLoading) {
@@ -24,8 +27,16 @@ export default function BusinessRegistration() {
 
         <BusinessRegistrationForm
           onSuccess={() => {
-            // Redirect to dashboard after successful registration
-            window.location.href = "/dashboard"
+            // Show success toast and redirect to login page
+            toast.success("Registration successful! Please log in to continue.", {
+              icon: "✅",
+              duration: 4000,
+            })
+            
+            // Redirect to login page after a short delay
+            setTimeout(() => {
+              router.push("/login")
+            }, 2000)
           }}
         />
 

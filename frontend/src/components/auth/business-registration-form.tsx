@@ -95,7 +95,16 @@ export default function BusinessRegistrationForm({ onSuccess }: BusinessRegistra
 
     if (result.success) {
       reset()
+      toast.success("Account created successfully!", {
+        icon: "🎉",
+        duration: 3000,
+      })
       onSuccess?.()
+    } else {
+      toast.error(result.error || "Registration failed. Please try again.", {
+        icon: "❌",
+        duration: 4000,
+      })
     }
   }
 

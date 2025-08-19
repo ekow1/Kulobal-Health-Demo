@@ -56,6 +56,7 @@ orderRouter.post('/', auth, async (c) => {
   try {
     const user = c.get('user');
     const body = await c.req.json();
+    console.log('Creating order with data:', JSON.stringify(body, null, 2));
     const validatedData = createOrderSchema.parse(body);
     
     // Create order data
@@ -81,25 +82,33 @@ orderRouter.post('/', auth, async (c) => {
     // Create new order
     const order = new Order(orderData);
     await order.save();
+    console.log('Order created successfully:', order.orderNumber);
     
     // If there's a transaction ID, link it to a payment
     if (validatedData.paymentDetails.transactionId) {
-      await Payment.findOneAndUpdate(
-        { transactionId: validatedData.paymentDetails.transactionId },
-        { 
-          $set: { 
-            'metadata.orderId': order.orderNumber,
-            'metadata.orderDetails': {
-              orderId: order._id,
-              orderNumber: order.orderNumber,
-              total: order.total,
-              items: order.items
+      try {
+        await Payment.findOneAndUpdate(
+          { transactionId: validatedData.paymentDetails.transactionId },
+          { 
+            $set: { 
+              'metadata.orderId': order.orderNumber,
+              'metadata.orderDetails': {
+                orderId: order._id,
+                orderNumber: order.orderNumber,
+                total: order.total,
+                items: order.items
+              }
             }
           }
-        }
-      );
+        );
+      } catch (paymentUpdateError) {
+        console.error('Error updating payment with order details:', paymentUpdateError);
+        // Don't fail the order creation if payment update fails
+        // The order is already created successfully
+      }
     }
     
+    console.log('Sending success response for order:', order.orderNumber);
     return c.json({
       success: true,
       message: 'Order created successfully',

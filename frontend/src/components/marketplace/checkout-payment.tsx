@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { usePaymentStore } from "@/store/payment-store"
 import { useOrdersStore } from "@/store/orders-store"
 import type { Payment } from "@/types/payment"
+import toast from "react-hot-toast"
 
 
 export default function CheckoutPage() {
@@ -69,12 +70,12 @@ export default function CheckoutPage() {
     if (userdetails && Object.keys(userdetails).length > 0 && !hasInitializedRef.current) {
       console.log("Initializing shipping details from user data")
       const newShippingDetails = {
-        pharmacyName: userdetails.businessName || "",
+        pharmacyName: userdetails.businessName || userdetails.ownerName || "",
         phoneNumber: userdetails.telephone || "",
         pharmacyEmail: userdetails.email || "",
         pharmacyLocation: userdetails.location || "",
-        streetAddress: "", // Not available in auth user data
-        gpsAddress: "", // Not available in auth user data
+        streetAddress: "", // Not available in User type
+        gpsAddress: "", // Not available in User type
       }
       console.log("Setting shipping details to:", newShippingDetails)
       setShippingDetails(newShippingDetails)
@@ -177,17 +178,17 @@ export default function CheckoutPage() {
 
       // Validate required fields
       if (!paymentType) {
-        alert("Please select a payment type")
+        toast.error("Please select a payment type")
         return
       }
 
       if (paymentType !== "credit" && !paymentMethod) {
-        alert("Please select a payment method")
+        toast.error("Please select a payment method")
         return
       }
 
       if (paymentType === "installment-payment" && installmentPercentage === 0) {
-        alert("Please select an installment percentage")
+        toast.error("Please select an installment percentage")
         return
       }
 
@@ -354,9 +355,10 @@ export default function CheckoutPage() {
       setCompletedPayment(payment)
       clearCart()
       setShowSuccessModal(true)
+      toast.success("Payment processed successfully!")
     } catch (error) {
       console.error("Payment processing failed:", error)
-      alert(`Payment failed: ${error instanceof Error ? error.message : "Unknown error"}`)
+      toast.error(`Payment failed: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       console.log("Payment processing completed")
       isProcessingRef.current = false
@@ -389,7 +391,7 @@ export default function CheckoutPage() {
       }
 
       if (!selectedPaymentOption) {
-        alert("Please select a payment option")
+        toast.error("Please select a payment option")
         return
       }
 

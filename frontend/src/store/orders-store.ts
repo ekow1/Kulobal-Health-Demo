@@ -104,10 +104,10 @@ interface OrdersStore {
 export const useOrdersStore = create<OrdersStore>()(
   persist(
     (set, get) => ({
-      orders: [],
+  orders: [],
       selectedOrder: null,
-      isLoading: false,
-      error: null,
+  isLoading: false,
+  error: null,
 
       fetchOrders: async (params) => {
         set({ isLoading: true, error: null })
@@ -129,10 +129,10 @@ export const useOrdersStore = create<OrdersStore>()(
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.message || "Failed to fetch orders"
           set({ error: errorMessage, isLoading: false })
-        }
-      },
+    }
+  },
 
-      fetchOrderById: async (orderId: string) => {
+  fetchOrderById: async (orderId: string) => {
         set({ isLoading: true, error: null })
         try {
           const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/orders/${orderId}`, { withCredentials: true })

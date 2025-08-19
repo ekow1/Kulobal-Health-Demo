@@ -38,6 +38,7 @@ const createOrderSchema = z.object({
   }),
   notes: z.string().optional(),
   estimatedDelivery: z.string().optional(), // ISO date string
+  // Note: orderNumber is generated on the backend, not required from frontend
 });
 
 const updateOrderStatusSchema = z.object({
@@ -59,9 +60,18 @@ orderRouter.post('/', auth, async (c) => {
     console.log('Creating order with data:', JSON.stringify(body, null, 2));
     const validatedData = createOrderSchema.parse(body);
     
+    // Generate order number
+    const date = new Date();
+    const year = date.getFullYear().toString().slice(-2);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const orderNumber = `ORD${year}${month}${day}${random}`;
+    
     // Create order data
     const orderData = {
       userId: user._id,
+      orderNumber: orderNumber, // Explicitly set the order number
       items: validatedData.items,
       subtotal: validatedData.subtotal,
       deliveryFee: validatedData.deliveryFee,

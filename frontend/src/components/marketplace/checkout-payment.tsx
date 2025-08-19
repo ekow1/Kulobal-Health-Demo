@@ -324,7 +324,7 @@ export default function CheckoutPage() {
         description: description,
         metadata: metadata
       })
-             console.log("Payment processed successfully:", payment)
+      console.log("Payment processed successfully:", payment)
 
        // Prepare order data for debugging
        const orderData = {
@@ -881,10 +881,10 @@ export default function CheckoutPage() {
                 </CardHeader>
                 <CardContent className="p-6">
                   {!userdetails ? (
-                                          <div className="flex items-center justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
                         <span className="ml-2 text-gray-600 dark:text-gray-400">Please log in to continue...</span>
-                      </div>
+                    </div>
                   ) : (
                   <div className="grid gap-4">
                     <div>

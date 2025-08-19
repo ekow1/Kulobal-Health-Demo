@@ -10,12 +10,11 @@ import {
 } from "@tanstack/react-table"
 import { ArrowLeft, ArrowRight, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { usePaymentStore, useFilteredPayments } from "@/store/payment-store"
+import { usePaymentStore } from "@/store/payment-store"
 import type { Payment } from "@/types/payment"
 
 export function PaymentsTable() {
-  const { fetchPayments } = usePaymentStore()
-  const payments = useFilteredPayments()
+  const { fetchPayments, filteredPayments: payments } = usePaymentStore()
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,

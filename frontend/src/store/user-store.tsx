@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { User } from "./types";
-import { apiClient } from "@/lib/api-client";
 import axios from "axios";
 
 // Define the store state interface
@@ -37,7 +36,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     const { userData } = get();
     set({ isloading: true });
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/register`, userData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/register`, userData, { withCredentials: true });
       set({ user: response.data, isloading: false });
       console.log(userData);
     } catch (error) {
@@ -52,11 +51,12 @@ export const useUserStore = create<UserStore>((set, get) => ({
     set({ isloading: true });
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/auth/login`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/login`,
         {
           email: credentials.email,
           password: credentials.password,
-        }
+        },
+        { withCredentials: true }
       );
       set({ user: response.data, isloading: false });
     } catch (error) {
@@ -70,10 +70,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
   VerificationEmail: async (email: string, code : string) => {
     set({ isloading: true });
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/verify-email`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/verify-email`, {
         email: email,
         code: code,
-      });
+      }, { withCredentials: true });
       set({ user: response.data, isloading: false });
     } catch (error) {
       const errorMessage =
@@ -88,9 +88,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
   forgotPassword: async (email: string) =>{
     set({ isloading: true });
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/forgot-password`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/forgot-password`, {
         email,
-      });
+      }, { withCredentials: true });
       set({ user: response.data, isloading: false });
     } catch (error) {
       const errorMessage =
@@ -103,10 +103,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
   resetPassword: async (token: string, newPassword: string) => {
     set({ isloading: true });
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/reset-password`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/reset-password`, {
         token,
         newPassword,
-      });
+      }, { withCredentials: true });
       set({ user: response.data, isloading: false });
     } catch (error) {
       const errorMessage =
@@ -116,14 +116,15 @@ export const useUserStore = create<UserStore>((set, get) => ({
   }
 ,
 
+
   //change password
   changePassword: async (oldPassword: string, newPassword: string) => {
     set({ isloading: true });
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/change-password`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/change-password`, {
         oldPassword,
         newPassword,
-      });
+      }, { withCredentials: true });
       set({ user: response.data, isloading: false });
     } catch (error) {
       const errorMessage =
@@ -135,10 +136,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
   userInfo: async () => {
     set({ isloading: true });
     try {
-      const response = await apiClient.getProfile();
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/profile`, { withCredentials: true });
       console.log("response :",response)
-      if (response.success && response.data?.user) {
-        set({ userData: response.data.user as unknown as Partial<User>, isloading: false });
+      if (response.data.success && response.data.data?.user) {
+        set({ userData: response.data.data.user as unknown as Partial<User>, isloading: false });
       } else {
         set({ error: 'Failed to fetch user data', isloading: false });
       }

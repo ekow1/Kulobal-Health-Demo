@@ -11,13 +11,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useAuthStore } from "@/store/auth-store"
 import { Button } from "@/components/ui/button"
 import { usePaymentStore } from "@/store/payment-store"
+import { useOrdersStore } from "@/store/orders-store"
 import type { Payment } from "@/types/payment"
-import { useUserStore } from "@/store/user-store"
 
 
 export default function CheckoutPage() {
   const { totalItems, totalPrice, items, clearCart } = useCartStore()
-  const { simulateNewPayment, isLoading: paymentLoading } = usePaymentStore()
+  const { createNewPayment, isLoading: paymentLoading } = usePaymentStore()
+  const { createOrder, isLoading: orderLoading } = useOrdersStore()
 
   // Use refs to track if operations are in progress
   const isProcessingRef = useRef<boolean>(false)
@@ -45,15 +46,11 @@ export default function CheckoutPage() {
 
   const user = useAuthStore((state) => state.user)
   const updateProfile = useAuthStore((state) => state.updateProfile)
-
-  const {userData, userInfo, isloading} = useUserStore()
-  useEffect(() => {
-    console.log("Calling userInfo...")
-    userInfo()
-  }, [userInfo])
-  console.log("userData :",userData)
-  const userdetails = userData
-  console.log("userdetails :",userdetails)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  
+  // Use authenticated user data instead of user store
+  const userdetails = user
+  console.log("Authenticated user details:", userdetails)
 
   // Initialize shipping details only once
   const [shippingDetails, setShippingDetails] = useState(() => ({
@@ -72,12 +69,12 @@ export default function CheckoutPage() {
     if (userdetails && Object.keys(userdetails).length > 0 && !hasInitializedRef.current) {
       console.log("Initializing shipping details from user data")
       const newShippingDetails = {
-        pharmacyName: userdetails.businessName || userdetails.pharmacyName || "",
-        phoneNumber: userdetails.telephone || userdetails.phoneNumber || "",
-        pharmacyEmail: userdetails.email || userdetails.pharmacyEmail || "",
-        pharmacyLocation: userdetails.location || userdetails.pharmacyLocation || "",
-        streetAddress: userdetails.streetAddress || "",
-        gpsAddress: userdetails.gpsAddress || "",
+        pharmacyName: userdetails.businessName || "",
+        phoneNumber: userdetails.telephone || "",
+        pharmacyEmail: userdetails.email || "",
+        pharmacyLocation: userdetails.location || "",
+        streetAddress: "", // Not available in auth user data
+        gpsAddress: "", // Not available in auth user data
       }
       console.log("Setting shipping details to:", newShippingDetails)
       setShippingDetails(newShippingDetails)
@@ -265,9 +262,8 @@ export default function CheckoutPage() {
       // Create payment metadata
       const metadata = {
         orderId: `ORD_${Date.now()}`,
-        paymentType,
-        paymentMethod: finalPaymentMethod, // "pay-online", "cash-on-delivery", or "credit"
-        ...(paymentOption && { paymentOption }), // "card" or "MoMo" for online payments
+        paymentType: paymentType as "full-payment" | "partial-payment" | "deposit" | "installment-payment",
+        paymentMethod: finalPaymentMethod as "pay-on-delivery" | "online-payment" | "mobile-money" | "cash-on-delivery" | "pay-online",
         pharmacyName: shippingDetails.pharmacyName,
         shippingDetails,
         items: items.map((item) => ({
@@ -309,8 +305,51 @@ export default function CheckoutPage() {
      
       
 
-      const payment = await simulateNewPayment(user?.id || "1", paymentAmount, description, dbPaymentType, metadata)
+      const payment = await createNewPayment({
+        amount: paymentAmount,
+        currency: 'GHS',
+        paymentType: dbPaymentType,
+        paymentMethod: {
+          type: dbPaymentType === 'card' ? 'card' : dbPaymentType === 'mobile_money' ? 'mobile_money' : 'cash',
+          cardType: dbPaymentType === 'card' ? getCardType(cardDetails.number) : undefined,
+          last4Digits: dbPaymentType === 'card' ? cardDetails.number.slice(-4) : undefined,
+          expiryMonth: dbPaymentType === 'card' ? cardDetails.expiry.split('/')[0] : undefined,
+          expiryYear: dbPaymentType === 'card' ? cardDetails.expiry.split('/')[1] : undefined,
+          cardholderName: dbPaymentType === 'card' ? cardDetails.name : undefined,
+          network: dbPaymentType === 'mobile_money' ? selectedNetwork as 'mtn' | 'vodafone' | 'airteltigo' | 'telecel' : undefined,
+          phoneNumber: dbPaymentType === 'mobile_money' ? momoDetails.phoneNumber : undefined,
+          accountName: dbPaymentType === 'mobile_money' ? shippingDetails.pharmacyName : undefined,
+        },
+        description: description,
+        metadata: metadata
+      })
       console.log("Payment processed successfully:", payment)
+
+      // Create order after successful payment
+      const order = await createOrder({
+        items: items.map((item) => ({
+          productId: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        tax: tax,
+        total: total,
+        currency: 'GHS',
+        shippingDetails: shippingDetails,
+        paymentDetails: {
+          paymentType: paymentType as 'full-payment' | 'partial-payment' | 'deposit' | 'credit',
+          paymentMethod: finalPaymentMethod as 'pay-on-delivery' | 'online-payment' | 'mobile-money',
+          amount: paymentAmount,
+          currency: 'GHS',
+          transactionId: payment.transactionId,
+        },
+        notes: `Payment ID: ${payment.id}`,
+        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+      })
+      console.log("Order created successfully:", order)
 
       setCompletedPayment(payment)
       clearCart()
@@ -335,7 +374,8 @@ export default function CheckoutPage() {
     cardDetails,
     selectedNetwork,
     momoDetails,
-    simulateNewPayment,
+    createNewPayment,
+    createOrder,
     user,
     clearCart,
     isProcessing,
@@ -698,13 +738,14 @@ export default function CheckoutPage() {
                   !selectedPaymentOption ||
                   isProcessing ||
                   paymentLoading ||
+                  orderLoading ||
                   (selectedPaymentOption === "mobile-money" && (!selectedNetwork || !momoDetails.phoneNumber)) ||
                   (selectedPaymentOption === "card" &&
                     (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvv))
                 }
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white"
               >
-                {isProcessing || paymentLoading ? "Processing..." : "Pay Now"}
+                {isProcessing || paymentLoading || orderLoading ? "Processing..." : "Pay Now"}
               </Button>
             </div>
           </div>
@@ -832,11 +873,11 @@ export default function CheckoutPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-6">
-                  {isloading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
-                      <span className="ml-2 text-gray-600 dark:text-gray-400">Loading user data...</span>
-                    </div>
+                  {!userdetails ? (
+                                          <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                        <span className="ml-2 text-gray-600 dark:text-gray-400">Please log in to continue...</span>
+                      </div>
                   ) : (
                   <div className="grid gap-4">
                     <div>
@@ -1189,6 +1230,7 @@ export default function CheckoutPage() {
                       disabled={
                         isProcessing ||
                         paymentLoading ||
+                        orderLoading ||
                         (paymentType === "installment-payment" && installmentPercentage === 0) ||
                         (!paymentMethod && paymentType !== "credit") ||
                         totalItems === 0 ||
@@ -1196,7 +1238,7 @@ export default function CheckoutPage() {
                       }
                       onClick={handleSubmit}
                     >
-                      {isProcessing || paymentLoading ? "Processing..." : "Confirm Order"}
+                      {isProcessing || paymentLoading || orderLoading ? "Processing..." : "Confirm Order"}
                     </Button>
                   </div>
                 </CardContent>

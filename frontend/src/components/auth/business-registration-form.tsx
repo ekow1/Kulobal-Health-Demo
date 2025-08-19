@@ -106,7 +106,13 @@ export default function BusinessRegistrationForm({ onSuccess }: BusinessRegistra
           Business Info <span className="float-right">1/2</span>
         </div>
 
-        <div className="w-full max-w-sm mt-6 space-y-4">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleNext()
+          }}
+          className="w-full max-w-sm mt-6 space-y-4"
+        >
           <div className="space-y-1">
             <Controller
               name="businessName"
@@ -161,10 +167,10 @@ export default function BusinessRegistrationForm({ onSuccess }: BusinessRegistra
             {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location.message}</p>}
           </div>
 
-          <Button className="w-full" variant="default" type="button" onClick={handleNext}>
+          <Button className="w-full" variant="default" type="submit">
             Continue
           </Button>
-        </div>
+        </form>
       </>
     )
   }

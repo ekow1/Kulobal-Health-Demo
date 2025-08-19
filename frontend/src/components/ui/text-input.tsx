@@ -26,7 +26,6 @@ export default function TextInput({
           className="peer relative h-12 w-full rounded border border-slate-200 px-4 text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white focus:border-emerald-500 focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
           onChange={onChange}
           value={value}
-          required
         />
       </label>
     </div>

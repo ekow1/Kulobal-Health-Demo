@@ -335,6 +335,7 @@ export const usePaymentStore = create<PaymentState>()(
         },
 
         createNewPayment: async (paymentData) => {
+          console.log(paymentData)
           set({ isLoading: true, error: null })
           try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/payments`, paymentData, { withCredentials: true })

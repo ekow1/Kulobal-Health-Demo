@@ -7,8 +7,7 @@
     "dev": "node --watch index.js",
     "build": "echo 'No build step needed for JavaScript'",
     "start": "node index.js",
-    "test": "echo \"No tests specified\" && exit 0",
-    "migrate:remove-username-index": "node scripts/remove-username-index.js"
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "@hono/node-server": "^1.18.1",

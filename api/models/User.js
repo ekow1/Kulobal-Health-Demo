@@ -115,21 +115,4 @@ userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ isActive: 1 });
 
-// Handle legacy username index issues
-userSchema.on('index', function(error) {
-  if (error && error.code === 11000 && error.keyPattern && error.keyPattern.username) {
-    console.log('Legacy username index detected, attempting to remove...');
-    this.collection.dropIndex('username_1').catch(err => {
-      console.log('Could not remove legacy username index:', err.message);
-    });
-  }
-});
-
-// Ensure indexes are created properly
-User.createIndexes().catch(error => {
-  if (error && error.code === 11000 && error.keyPattern && error.keyPattern.username) {
-    console.log('Legacy username index issue detected during startup');
-  }
-});
-
 export const User = mongoose.model('User', userSchema);

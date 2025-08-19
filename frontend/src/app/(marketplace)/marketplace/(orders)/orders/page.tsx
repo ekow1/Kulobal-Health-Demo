@@ -5,9 +5,12 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, Clock, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Sidebar from "../sidebar";
-import { useOrdersStore } from "@/store/orders-store";
-import { useAuthStore } from "@/store/auth-store";
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+
+// Dynamically import stores to avoid SSR issues
+const useOrdersStore = dynamic(() => import("@/store/orders-store").then(mod => ({ default: mod.useOrdersStore })), { ssr: false });
+const useAuthStore = dynamic(() => import("@/store/auth-store").then(mod => ({ default: mod.useAuthStore })), { ssr: false });
 
 const getStatusClasses = (status: string) => {
   switch (status) {

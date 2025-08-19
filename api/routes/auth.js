@@ -53,10 +53,9 @@ const generateToken = (userId, email, role) => {
 authRouter.post('/register', async (c) => {
   try {
     const body = await c.req.json();
-    const validatedData = registerSchema.parse(body);
     
     // Check if user already exists
-    const existingUser = await User.findOne({ email: validatedData.email });
+    const existingUser = await User.findOne({ email: body.email });
     if (existingUser) {
       return c.json({
         success: false,
@@ -64,17 +63,25 @@ authRouter.post('/register', async (c) => {
       }, 400);
     }
     
-    // Create new user
-    const user = new User(validatedData);
-    await user.save();
+    // Create new user with basic data
+    const userData = {
+      businessName: body.businessName || '',
+      ownerName: body.ownerName || '',
+      email: body.email,
+      password: body.password,
+      telephone: body.telephone || '',
+      location: body.location || '',
+      role: body.role || 'pharmacy',
+      isActive: true,
+      isVerified: false
+    };
     
-    // Generate token
-    const token = generateToken(String(user._id), user.email, user.role);
+    const user = new User(userData);
+    await user.save();
     
     // Update last login
     user.lastLogin = new Date();
     await user.save();
-    
     
     return c.json({
       success: true,
@@ -92,42 +99,10 @@ authRouter.post('/register', async (c) => {
     }, 201);
     
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return c.json({
-        success: false,
-        message: 'Validation error',
-        errors: error.errors
-      }, 400);
-    }
-    
-    // Handle duplicate key errors
-    if (error.code === 11000) {
-      if (error.keyPattern && error.keyPattern.username) {
-        // This is a legacy username index issue
-        console.error('Legacy username index error:', error);
-        return c.json({
-          success: false,
-          message: 'Registration failed due to database configuration issue. Please contact support.'
-        }, 500);
-      }
-      
-      if (error.keyPattern && error.keyPattern.email) {
-        return c.json({
-          success: false,
-          message: 'User with this email already exists'
-        }, 400);
-      }
-      
-      return c.json({
-        success: false,
-        message: 'Duplicate entry found'
-      }, 400);
-    }
-    
     console.error('Register error:', error);
     return c.json({
       success: false,
-      message: 'Internal server error'
+      message: 'Registration failed'
     }, 500);
   }
 });

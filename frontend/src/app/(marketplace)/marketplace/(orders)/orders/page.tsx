@@ -23,24 +23,15 @@ const getStatusClasses = (status: string) => {
 };
 
 export default function OrderHistory() {
+  const [mounted, setMounted] = useState(false);
   const { orders, fetchOrders, isLoading } = useOrdersStore();
   const { isAuthenticated, user } = useAuthStore();
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
+  // Ensure component is mounted on client side
   useEffect(() => {
-    console.log('Orders page mounted, fetching orders...');
-    console.log('User authenticated:', isAuthenticated);
-    console.log('Current user:', user);
-    
-    if (isAuthenticated && user) {
-      fetchOrders();
-    } else {
-      console.log('User not authenticated, cannot fetch orders');
-    }
-  }, [fetchOrders, isAuthenticated, user]);
-
-  console.log('Current orders state:', orders);
-  console.log('Filtered orders:', filteredOrders);
+    setMounted(true);
+  }, []);
 
   const filterOptions = [
     { label: "All Orders", value: "all" },
@@ -54,6 +45,40 @@ export default function OrderHistory() {
     filterStatus === "all"
       ? orders
       : orders.filter((order) => order.status === filterStatus);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log('Orders page mounted, fetching orders...');
+      console.log('User authenticated:', isAuthenticated);
+      console.log('Current user:', user);
+    }
+    
+    if (isAuthenticated && user) {
+      fetchOrders();
+    } else if (typeof window !== 'undefined') {
+      console.log('User not authenticated, cannot fetch orders');
+    }
+  }, [fetchOrders, isAuthenticated, user]);
+
+  // Only log on client side
+  if (typeof window !== 'undefined') {
+    console.log('Current orders state:', orders);
+    console.log('Filtered orders:', filteredOrders);
+  }
+
+  // Don't render until mounted on client side
+  if (!mounted) {
+    return (
+      <div className="flex flex-col md:flex-row container mx-auto">
+        <Sidebar />
+        <div className="flex-1 p-4 md:p-8">
+          <div className="text-center py-8 text-gray-500">
+            Loading...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row container mx-auto">

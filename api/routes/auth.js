@@ -146,10 +146,10 @@ authRouter.post('/login', async (c) => {
     user.lastLogin = new Date();
     await user.save();
     
-    // Set HTTP-only cookie with userId
-    const cookieValue = `userId=${(user._id).toString()}; HttpOnly; Path=/; Domain=.ekowlabs.space; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
-    const secureCookie = process.env.NODE_ENV === 'production' ? `${cookieValue}; Secure` : cookieValue;
-    c.header('Set-Cookie', secureCookie);
+              // Set HTTP-only cookie with userId
+          const cookieValue = `userId=${(user._id).toString()}; HttpOnly; Path=/; Domain=.kulobalhealth.com; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
+          const secureCookie = process.env.NODE_ENV === 'production' ? `${cookieValue}; Secure` : cookieValue;
+          c.header('Set-Cookie', secureCookie);
     
     return c.json({
       success: true,
@@ -350,7 +350,7 @@ authRouter.get('/users', auth, requireRole(['admin']), async (c) => {
 authRouter.post('/logout', async (c) => {
   try {
     // Clear the userId cookie by setting it to expire in the past
-    c.header('Set-Cookie', 'userId=; HttpOnly; Path=/; Domain=.ekowlabs.space; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
+    c.header('Set-Cookie', 'userId=; HttpOnly; Path=/; Domain=.kulobalhealth.com; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
     
     return c.json({
       success: true,

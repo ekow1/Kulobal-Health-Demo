@@ -158,7 +158,7 @@ vercel
 
 ### Frontend (.env.local)
 ```env
-NEXT_PUBLIC_API_URL=https://your-backend-url.vercel.app
+NEXT_PUBLIC_API_URL=https://backend.kulobalhealth.com
 ```
 
 ### Backend (.env)
@@ -172,7 +172,7 @@ JWT_SECRET=your-super-secret-jwt-key-here
 # API Configuration
 PORT=5000
 NODE_ENV=production
-CORS_ORIGIN=https://your-frontend-url.vercel.app
+CORS_ORIGIN=https://frontend.kulobalhealth.com
 ```
 
 ## 🌐 API Endpoints

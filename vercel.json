@@ -24,6 +24,8 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_API_URL": "https://backend.kulobalhealth.com",
+    "CORS_ORIGIN": "https://frontend.kulobalhealth.com"
   }
 }

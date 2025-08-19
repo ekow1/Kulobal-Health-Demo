@@ -31,10 +31,10 @@ const db = await connectDB();
 // CORS configuration
 const corsOrigins = process.env.CORS_ORIGIN 
   ? [process.env.CORS_ORIGIN]
-  : ['http://localhost:3000', 'https://demo.ekowlabs.space','https://frontend.ekowlabs.space'];
+  : ['http://localhost:3000', 'https://frontend.kulobalhealth.com'];
 
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'https://demo.ekowlabs.space','https://frontend.ekowlabs.space','https://server.ekowlabs.space'],
+  origin: ['http://localhost:3000', 'https://frontend.kulobalhealth.com'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true

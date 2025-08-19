@@ -245,9 +245,9 @@ export default function CheckoutPage() {
       } else if (paymentMethod === "pay-on-delivery") {
         finalPaymentMethod = "cash-on-delivery"
       } else if (paymentType === "credit") {
-        finalPaymentMethod = "credit"
+        finalPaymentMethod = "cash-on-delivery" // Credit orders use cash-on-delivery as payment method
       } else {
-        finalPaymentMethod = "unknown"
+        finalPaymentMethod = "cash-on-delivery" // Default fallback
       }
 
       // Determine specific payment option for pay-online
@@ -324,32 +324,37 @@ export default function CheckoutPage() {
         description: description,
         metadata: metadata
       })
-      console.log("Payment processed successfully:", payment)
+             console.log("Payment processed successfully:", payment)
 
-      // Create order after successful payment
-      const order = await createOrder({
-        items: items.map((item) => ({
-          productId: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        subtotal: subtotal,
-        deliveryFee: deliveryFee,
-        tax: tax,
-        total: total,
-        currency: 'GHS',
-        shippingDetails: shippingDetails,
-        paymentDetails: {
-          paymentType: paymentType as 'full-payment' | 'partial-payment' | 'deposit' | 'credit',
-          paymentMethod: finalPaymentMethod as 'pay-on-delivery' | 'online-payment' | 'mobile-money',
-          amount: paymentAmount,
-          currency: 'GHS',
-          transactionId: payment.transactionId,
-        },
-        notes: `Payment ID: ${payment.id}`,
-        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-      })
+       // Prepare order data for debugging
+       const orderData = {
+         items: items.map((item) => ({
+           productId: item.id,
+           name: item.name,
+           quantity: item.quantity,
+           price: item.price,
+         })),
+         subtotal: subtotal,
+         deliveryFee: deliveryFee,
+         tax: tax,
+         total: total,
+         currency: 'GHS',
+         shippingDetails: shippingDetails,
+         paymentDetails: {
+           paymentType: paymentType as 'full-payment' | 'partial-payment' | 'deposit' | 'credit' | 'installment-payment',
+           paymentMethod: finalPaymentMethod as 'pay-on-delivery' | 'online-payment' | 'mobile-money' | 'cash-on-delivery' | 'pay-online',
+           amount: paymentAmount,
+           currency: 'GHS',
+           ...(payment.transactionId && { transactionId: payment.transactionId }),
+         },
+         notes: `Payment ID: ${payment.id}`,
+         estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+       }
+       
+       console.log("Creating order with data:", orderData)
+
+       // Create order after successful payment
+       const order = await createOrder(orderData)
       console.log("Order created successfully:", order)
 
       setCompletedPayment(payment)

@@ -85,8 +85,8 @@ interface OrdersStore {
       gpsAddress?: string
     }
     paymentDetails: {
-      paymentType: 'full-payment' | 'partial-payment' | 'deposit' | 'credit'
-      paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money'
+      paymentType: 'full-payment' | 'partial-payment' | 'deposit' | 'credit' | 'installment-payment'
+      paymentMethod: 'pay-on-delivery' | 'online-payment' | 'mobile-money' | 'cash-on-delivery' | 'pay-online'
       amount: number
       currency?: string
       transactionId?: string

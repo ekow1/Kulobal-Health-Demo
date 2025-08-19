@@ -100,6 +100,30 @@ authRouter.post('/register', async (c) => {
       }, 400);
     }
     
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      if (error.keyPattern && error.keyPattern.username) {
+        // This is a legacy username index issue
+        console.error('Legacy username index error:', error);
+        return c.json({
+          success: false,
+          message: 'Registration failed due to database configuration issue. Please contact support.'
+        }, 500);
+      }
+      
+      if (error.keyPattern && error.keyPattern.email) {
+        return c.json({
+          success: false,
+          message: 'User with this email already exists'
+        }, 400);
+      }
+      
+      return c.json({
+        success: false,
+        message: 'Duplicate entry found'
+      }, 400);
+    }
+    
     console.error('Register error:', error);
     return c.json({
       success: false,

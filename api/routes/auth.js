@@ -148,7 +148,7 @@ authRouter.post('/login', async (c) => {
     await user.save();
     
     // Set HTTP-only cookie with userId
-    c.header('Set-Cookie', `userId=${(user._id ).toString()}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`);
+    c.header('Set-Cookie', `userId=${(user._id ).toString()}; HttpOnly; Path=/; Domain=.ekowlabs.space; SameSite=Lax; Secure; Max-Age=${7 * 24 * 60 * 60}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`);
     
     return c.json({
       success: true,
